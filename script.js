@@ -192,36 +192,60 @@ function startGame() {
     // 1. Select the primary major category for the match
     currentGameMatrix = activePool[Math.floor(Math.random() * activePool.length)];
 
-    let innocentPool = [...currentGameMatrix.innocentWords];
-    shuffleArray(innocentPool);
+    // ANTI-MEMORIZATION BASELINE: 50% chance to swap which sub-pool serves as the native orientation
+    const standardUniverseFlip = Math.random() < 0.50;
+    
+    let nativeInnocentWords = standardUniverseFlip ? [...currentGameMatrix.imposterWords] : [...currentGameMatrix.innocentWords];
+    let nativeInnocentHint  = standardUniverseFlip ? currentGameMatrix.imposterHint : currentGameMatrix.innocentHint;
+    
+    let nativeImposterPool  = standardUniverseFlip ? [...currentGameMatrix.innocentWords] : [...currentGameMatrix.imposterWords];
+    let nativeImposterHint  = standardUniverseFlip ? currentGameMatrix.innocentHint : currentGameMatrix.imposterHint;
 
-    // Lock down exactly ONE unique innocent hint for all crewmates to share this round
-    const chosenInnocentHint = currentGameMatrix.innocentHint;
+    // 2. Apply the 25% Category Inversion Anomaly
+    const categoryInversionSetting = 0.25;
+    const isCategoryInverted = Math.random() < categoryInversionSetting;
 
-    // 2. Determine if a Chaos Mutation occurs using your UI element selector value
+    let finalInnocentPool, finalInnocentHint, finalImposterPool, finalImposterHint;
+
+    if (isCategoryInverted) {
+        // The Paradox Inversion triggers: Crewmates get Imposter pool data, Imposter gets Crewmate pool data
+        finalInnocentPool = [...nativeImposterPool];
+        finalInnocentHint = nativeImposterHint;
+        
+        finalImposterPool = [...nativeInnocentWords];
+        finalImposterHint = nativeInnocentHint;
+        
+        console.log("%c[SYSTEM ANOMALY]: Category Inversion Activated (25% chance). Pools have cross-wired!", "color: #00f0ff; font-weight: bold;");
+    } else {
+        // Standard baseline alignment configuration
+        finalInnocentPool = [...nativeInnocentWords];
+        finalInnocentHint = nativeInnocentHint;
+        
+        finalImposterPool = [...nativeImposterPool];
+        finalImposterHint = nativeImposterHint;
+    }
+
+    shuffleArray(finalInnocentPool);
+
+    // 3. Determine if a Chaos Mutation occurs using your UI element selector value
     const mutationSetting = parseFloat(document.getElementById('mutation-rate').value);
     const isMutationTriggered = Math.random() < mutationSetting;
-    let imposterSourceMatrix = currentGameMatrix; // Default: same major category
 
     if (isMutationTriggered && activePool.length > 1) {
         // Filter out the current category to force a completely different pool
         let alternatePool = activePool.filter(matrix => matrix.id !== currentGameMatrix.id);
-        imposterSourceMatrix = alternatePool[Math.floor(Math.random() * alternatePool.length)];
+        let imposterSourceMatrix = alternatePool[Math.floor(Math.random() * alternatePool.length)];
+        
+        // Grab a randomized pool orientation from the mutated category context
+        let structuralMutationFlip = Math.random() < 0.50;
+        finalImposterPool = structuralMutationFlip ? [...imposterSourceMatrix.imposterWords] : [...imposterSourceMatrix.innocentWords];
+        finalImposterHint = structuralMutationFlip ? imposterSourceMatrix.imposterHint : imposterSourceMatrix.innocentHint;
         
         console.log(`%c[CHAOS MUTATION]: Imposter word isolated from unrelated universe: "${imposterSourceMatrix.id}"`, "color: #ff0055; font-weight: bold;");
     }
 
-    // 3. Extract, shuffle, and isolate the exact Imposter data components
-    let imposterPool = [];
-    if (imposterSourceMatrix.imposterWords && imposterSourceMatrix.imposterWords.length > 0) {
-        imposterPool = [...imposterSourceMatrix.imposterWords];
-    }
-    shuffleArray(imposterPool);
-
-    const chosenImposterWord = imposterPool[0] || "PARADOX_SIGNAL";
-    
-    // Lock down exactly ONE unique imposter hint corresponding to their source universe
-    const chosenImposterHint = imposterSourceMatrix.imposterHint;
+    shuffleArray(finalImposterPool);
+    const chosenImposterWord = finalImposterPool[0] || "PARADOX_SIGNAL";
 
     // 4. Handle Special Protocol configurations
     const imposterIndex = Math.floor(Math.random() * players.length);
@@ -259,16 +283,16 @@ function startGame() {
         const isMuted = (idx === assignedMuteIndex);
         
         let assignedWord = "CORE_NODE";
-        let assignedHint = chosenInnocentHint;
+        let assignedHint = finalInnocentHint;
 
         if (isImposter) {
             assignedWord = chosenImposterWord;
-            assignedHint = chosenImposterHint;
+            assignedHint = finalImposterHint;
         } else if (isParanoiac) {
             assignedWord = "⚠️ SYNAPSE_BLIND_SIGNAL";
             assignedHint = "Your neural connection is corrupted. You have no data frame. Act natural.";
         } else {
-            assignedWord = innocentPool.pop() || "CORE_NODE";
+            assignedWord = finalInnocentPool.pop() || "CORE_NODE";
         }
         
         return {
