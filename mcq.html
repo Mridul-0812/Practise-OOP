@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 2: Advanced Multiple Choice Arena</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Phase-Specific Extensions to compliment styles.css */
+        .mcq-wrapper {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+        .progress-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            height: 12px;
+            width: 100%;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, var(--accent-violet), var(--accent-cyan));
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+        .code-snippet {
+            background: #040814;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        .diagram-mock {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px dashed rgba(0, 242, 254, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            line-height: 1.4;
+            text-align: center;
+            white-space: pre;
+        }
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .option-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .option-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .option-card.selected {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 242, 254, 0.04);
+            box-shadow: inset 0 0 10px rgba(0, 242, 254, 0.05);
+        }
+        .radio-node {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+        .option-card.selected .radio-node {
+            border-color: var(--accent-cyan);
+            background: var(--accent-cyan);
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+        .option-card.selected .radio-node::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #040814;
+        }
+        .option-text {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+        .nav-controls {
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 1.5rem;
+        }
+        .summary-panel {
+            text-align: center;
+            padding: 3rem 1.5rem;
+        }
+        .summary-score {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 20px var(--accent-glow);
+            margin: 1.5rem 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-code-branch glowing-icon"></i>
+            <span>SWE Engine</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+            <li><a href="definitions.html"><i class="fa-solid fa-book"></i> 1. Definitions</a></li>
+            <li class="active"><a href="mcq.html"><i class="fa-solid fa-list-check"></i> 2. MCQs</a></li>
+            <li><a href="saq.html"><i class="fa-solid fa-pen-to-square"></i> 3. Short Answer</a></li>
+            <li><a href="code.html"><i class="fa-solid fa-terminal"></i> 4. Code Practical</a></li>
+            <li><a href="erd.html"><i class="fa-solid fa-diagram-project"></i> 5. Class & ERDs</a></li>
+            <li><a href="test.html"><i class="fa-solid fa-vial"></i> 6. Testing Matrices</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <button id="reset-btn" class="btn-secondary"><i class="fa-solid fa-rotate-right"></i> Reset Progress</button>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        <div class="mcq-wrapper">
+            
+            <header class="glass-panel glowing-border header-panel">
+                <h1>Phase 2: Theoretical & Architectural Validation</h1>
+                <p>This section consists of 40 advanced diagnostic multiple choice items assessing technical boundaries, design patterns, and systemic state mutation constraints.</p>
+            </header>
+
+            <div class="glass-panel" id="quiz-card">
+                <div class="progress-container">
+                    <div class="progress-bar" id="ui-progress"></div>
+                </div>
+                
+                <div class="question-meta">
+                    <span id="question-index-display">Item Verification Loop: 1 / 40</span>
+                    <span id="category-badge" style="color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.5px;">Theory</span>
+                </div>
+
+                <div id="dynamic-question-anchor">
+                    </div>
+
+                <div class="options-list" id="options-anchor">
+                    </div>
+
+                <div class="nav-controls">
+                    <button id="next-item-btn" class="btn-primary glowing-btn" disabled>Lock Answer & Advance <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <div class="glass-panel summary-panel" id="summary-card" style="display: none;">
+                <i class="fa-solid fa-circle-check" style="font-size: 4rem; color: var(--status-complete); margin-bottom: 1rem;"></i>
+                <h2>Evaluation Matrix Completed</h2>
+                <p>All programmatic inputs and conceptual paths have been compiled and verified inside your profile ledger.</p>
+                <div class="summary-score" id="final-score-display">0 / 40</div>
+                <div class="cta-wrapper" style="display: inline-block;">
+                    <button id="exit-phase-btn" class="btn-primary glowing-btn">Commit Changes & Return <i class="fa-solid fa-house"></i></button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // LocalStorage Architecture System Hooks
+            let currentState = JSON.parse(localStorage.getItem('oop_exam_state')) || {
+                currentPhase: 2, isCompleted: false, scores: {}
+            };
+
+            const questionsDataset = [
+                {
+                    category: "Theory",
+                    question: "An object instance needs to protect its inner variables from direct corruption by outside modules. Which pillar of Object-Oriented Programming handles this constraint, and how is it implemented syntax-wise in Python?",
+                    options: [
+                        "Abstraction; implemented by inheriting from the abc module's ABC class interface template.",
+                        "Encapsulation; implemented by prefixing internal instance attributes with double underscores (__).",
+                        "Polymorphism; implemented by deploying standard method overriding workflows down a structural tree.",
+                        "Inheritance; implemented by passing the parent superclass identifier parameter inside a subclass definition."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Code Analysis",
+                    question: "Study the Python code snippet below. What happens when this module runs?",
+                    code: "class Player:\n    def __init__(self):\n        self.__health = 100\n\np1 = Player()\nprint(p1.__health)",
+                    options: [
+                        "It prints 100 smoothly because private properties can be extracted by external script paths.",
+                        "It triggers a compilation error because Python strictly blocks class declarations without type parameters.",
+                        "It raises an AttributeError because double underscores cause name mangling, hiding the variable from raw external access.",
+                        "It prints None because private parameters inside constructors require structural tracking links."
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Diagrams",
+                    question: "Review the ASCII architecture diagram below. Which type of class relationship is being explicitly described?",
+                    diagram: "+-----------------+\n|     Vehicle     |\n+-----------------+\n         ^         \n         | (Hollow Triangle Arrow)\n+-----------------+\n|    JetPlane     |\n+-----------------+",
+                    options: [
+                        "Aggregation; representing a weak reference collection layout.",
+                        "Composition; demonstrating absolute runtime part ownership pipelines.",
+                        "Dependency; mapping out a temporary interface parameter assignment.",
+                        "Inheritance; showcasing a specialized derived child class extending a base superclass."
+                    ],
+                    correct: 3 // Option D
+                },
+                {
+                    category: "Theory",
+                    question: "What is the primary architectural purpose of utilizing an Abstract Base Class (ABC) with an @abstractmethod in an object-oriented system layout?",
+                    options: [
+                        "To enforce a strict behavioral structural contract that derived subclasses must implement, while preventing direct instantiation of the base blueprint.",
+                        "To optimize runtime memory footprint footprints by caching properties directly onto the system stack layer.",
+                        "To allow compile-time overloading of parameters without breaking dynamic polymorphism binding threads.",
+                        "To isolate private attributes from child classes to prevent structural state overrides during runtime routines."
+                    ],
+                    optionsOrder: "normal",
+                    correct: 0 // Option A
+                },
+                {
+                    category: "Code Analysis",
+                    question: "A student writes the following class configuration. What architectural design flaw is present in this setup?",
+                    code: "class Employee:\n    def __init__(self, name, salary, manager_department_code):\n        self.name = name\n        self.salary = salary\n        self.manager_department_code = manager_department_code",
+                    options: [
+                        "Under-Generalisation; the class fails to establish separate variables for basic name attributes.",
+                        "Balanced Generalisation; this layout balances parent-child data paths perfectly.",
+                        "Over-Generalisation; a variable specific to managers has been forced up into the generalized Employee class, compromising scalability.",
+                        "Dynamic Overloading; constructors are not permitted to accept more than two positional parameters simultaneously."
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Theory",
+                    question: "How do Method Overloading and Method Overriding differ regarding code structure layout and system compilation tracking rules?",
+                    options: [
+                        "Overloading happens in separate trees; Overriding requires single instance wrappers.",
+                        "Overloading occurs within one class (resolved at compile-time/static binding); Overriding occurs across a hierarchy where a child replaces a parent method (resolved at runtime/dynamic binding).",
+                        "Overloading requires double underscores; Overriding requires utilizing public getter endpoints.",
+                        "Overloading maps out database relational configurations; Overriding defines mesh topological primitives."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Code Analysis",
+                    question: "Consider this class model. Which snippet correctly invokes the parent constructor from within the child's block?",
+                    code: "class Weapon:\n    def __init__(self, name):\n        self.name = name\n\nclass Rifle(Weapon):\n    def __init__(self, name, ammo_capacity):\n        # TARGET LINE",
+                    options: [
+                        "super().__init__(name)\n        self.ammo_capacity = ammo_capacity",
+                        "self.parent.__init__(name)\n        self.ammo_capacity = ammo_capacity",
+                        "Weapon.__init__(self)\n        self.ammo_capacity = ammo_capacity",
+                        "super(Rifle).__init__(self, name)"
+                    ],
+                    correct: 0 // Option A
+                },
+                {
+                    category: "Theory",
+                    question: "In database architecture, what is a Composite Key, and how does it safeguard referential data integrity inside structural tables?",
+                    options: [
+                        "A pointer parameter tracking attributes from alternative relational fields.",
+                        "An encryption hash protecting private variables inside an entity table.",
+                        "A unique record identifier forged by combining two or more attributes together when a single field cannot guarantee row uniqueness.",
+                        "A temporary connection vector dropped systematically after an injection loop terminates."
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Diagrams",
+                    question: "Analyze the database schema trace below. Which cardinality constraint link is described between the Passport table and the Person table?",
+                    diagram: "+--------------+              +------------+\n|    Person    | 1        1..1|  Passport  |\n+--------------+--------------+------------+\n| PK | PersonID|              | PK |PassNum|\n+--------------+              | FK |PersonID|\n+--------------+              +------------+",
+                    options: [
+                        "Many-to-Many configuration tracking multi-object pools.",
+                        "One-to-Many grouping connecting collections together.",
+                        "Strict One-to-One structural mapping relationship where an instance relates to exactly one unique match.",
+                        "Dependency arrangement passing structural interface variables."
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Theory",
+                    question: "What is the technical definition of a 'Mesh' in 3D graphics modeling pipelines, and what core geometric elements does its text database structure store?",
+                    options: [
+                        "An asset engine tracker logging hot-reloads inside scene hierarchies.",
+                        "A coordinate compilation tracker saving file standard wrappers.",
+                        "A rendering routine processing physics timing cycles across frame intervals.",
+                        "A structural database defining a 3D object's physical shape via coordinate corners (Vertices), wireframe lines (Edges), and shaded flat surfaces (Faces)."
+                    ],
+                    correct: 3 // Option D
+                },
+                {
+                    category: "Code Analysis",
+                    question: "You observe a camera tracking script component malfunctioning with a noticeable jitter look when tracking a vehicle. What is the standard technical remedy?",
+                    options: [
+                        "Shift the vehicle's spatial tracking computations from standard Update loops into the FixedUpdate physics timing method.",
+                        "Encapsulate the camera coordinates using private getters and custom setter doors.",
+                        "Re-map the mesh normals configuration inside the OBJ structural schema layout.",
+                        "Deploy a composite pointer trace key to map updates across distinct frame targets."
+                    ],
+                    correct: 0 // Option A
+                },
+                {
+                    category: "Theory",
+                    question: "Which option provides the most precise distinction between Composition and Aggregation architectural structural relationships?",
+                    options: [
+                        "Composition uses dashed lines; Aggregation uses solid vectors with hollow arrowheads.",
+                        "Composition describes a weak association link; Aggregation denotes strong absolute subclass hierarchies.",
+                        "Composition signifies absolute ownership where part lifecycles are bound to the parent's existence; Aggregation represents weak ownership where parts survive independently.",
+                        "Composition maps database primary key traces; Aggregation maps 3D coordinate mesh topologies."
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Theory",
+                    question: "In the software testing lifecycle, what distinguishes Black Box testing methodologies from White Box verification approaches?",
+                    options: [
+                        "Black Box evaluates raw input-output behaviors without internal structure exposure; White Box analyzes internal structural paths, conditionals, and logical statement coverage loops.",
+                        "Black Box requires continuous integration builds; White Box relies exclusively on manual tracking checklists.",
+                        "Black Box targets database key structures; White Box verifies asset modeling normals orientation.",
+                        "Black Box is executed during requirement definitions; White Box is locked strictly inside deployment timelines."
+                    ],
+                    correct: 0 // Option A
+                },
+                {
+                    category: "Code Analysis",
+                    question: "Study this programmatic testing block configuration. What type of software validation technique is being executed here?",
+                    code: "import unittest\nfrom account_file import Account\n\nclass TestAccount(unittest.TestCase):\n    def test_deposit(self):\n        acc = Account(\"123\", \"Alex\", 500)\n        acc.deposit(100)\n        self.assertEqual(acc.get_balance(), 600)",
+                    options: [
+                        "Integration Testing; assessing system coordination maps.",
+                        "Regression Testing; checking legacy script patches.",
+                        "Unit Testing; testing an isolated micro-component method in total separation from external framework layers.",
+                        "Grey Box Verification; utilizing partial database configuration parameters."
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Theory",
+                    question: "What role does the 'Normals' vector array perform inside an OBJ text database container schema file structure?",
+                    options: [
+                        "It acts as a primary identifier field ensuring relational data integrity constraints.",
+                        "It holds text data arrays clarifying UV wrapping metrics for skin textures.",
+                        "It provides index references connecting vertices into linear skeletal wireframes.",
+                        "It projects exactly perpendicular vectors from a face surface, which are critical for light scattering and shading calculations."
+                    ],
+                    correct: 3 // Option D
+                },
+                {
+                    category: "Code Analysis",
+                    question: "Analyze the class script layout below. What will occur when the process_transaction method attempts execution?",
+                    code: "class Vault:\n    def __init__(self):\n        self.__reserve = 5000\n\nclass Atm:\n    def process_transaction(self, vault_instance, amount):\n        vault_instance.__reserve -= amount",
+                    options: [
+                        "The transaction updates cleanly because parameter objects pass instance access rights.",
+                        "An AttributeError occurs because Atm cannot access Vault's mangled private property directly from outside.",
+                        "A syntax error blocks compilation due to cross-class pointer initialization rules.",
+                        "The value mutates to None because private interfaces require active super constructor hooks."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Theory",
+                    question: "What does the term 'Cohesion' quantify inside a software engineering structural component architecture profile?",
+                    options: [
+                        "The level of raw dependency connections tying independent modules to each other.",
+                        "The structural alignment matching local entity records to database foreign tables.",
+                        "The degree to which tasks and routines within a single module or class are closely related and functionally focused.",
+                        "The automatic hot-reload synchronization frequency between Blender and a game engine space."
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Theory",
+                    question: "When an engineer designs a Continuous Integration / Continuous Deployment (CI/CD) pipeline loop configuration, what is its primary operational mechanic?",
+                    options: [
+                        "To compile 3D meshes and bake light scattering normals automatically onto servers.",
+                        "To execute automated validation test suites immediately upon repository commits to catch defects early.",
+                        "To manage database record constraints via adaptive primary indexing structures.",
+                        "To isolate public interfaces into abstract base class structures dynamically."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Code Analysis",
+                    question: "Review the system implementation trace below. What core OOP concept is explicitly demonstrated by the logic execution inside the execute_pipeline loop?",
+                    code: "class Modifier:\n    def apply(self, val): pass\n\nclass Double(Modifier):\n    def apply(self, val): return val * 2\n\nclass Increment(Modifier):\n    def apply(self, val): return val + 5\n\ndef execute_pipeline(modifiers, initial_score):\n    score = initial_score\n    for m in modifiers:\n        score = m.apply(score)\n    return score",
+                    options: [
+                        "Strict Encapuslation separating attribute scopes.",
+                        "Polymorphic Message Passing combined with an architectural processing pipeline.",
+                        "Under-Generalisation forcing structural code duplication layouts.",
+                        "Static Early Binding mapping parameters during module compilation checkpoints."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Theory",
+                    question: "What design anomaly is triggered by 'Under-Generalisation' during the structural planning phase of a software system class hierarchy layout?",
+                    options: [
+                        "Irrelevant attributes are forced high up into a parent superclass, corrupting child logic.",
+                        "The blueprint class becomes entirely uninstantiable, blocking runtime execution threads.",
+                        "Failure to create a common superclass for classes with identical traits, leading to duplicate, redundant code blocks across siblings.",
+                        "Private variables trigger structural name mangling conflicts inside memory registration blocks."
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Theory",
+                    question: "What is the structural function of a Foreign Key (FK) in relational database architectural design profiles?",
+                    options: [
+                        "To enforce unique structural indexing rules across an isolated row layer.",
+                        "To establish a referential connection by storing the primary key of an external entity table, mapping out relationship paths cleanly.",
+                        "To prevent outside modules from reading private dictionary state structures.",
+                        "To track spatial coordinate vertices inside text-based graphics schemas."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Code Analysis",
+                    question: "Observe this Python configuration. Which option demonstrates the correct design template for initializing an Abstract Base Class method specification under syllabus standards?",
+                    options: [
+                        "class Shape:\n    def draw(self):\n        self.__is_abstract = True",
+                        "from abc import ABC, abstractmethod\nclass Shape(ABC):\n    @abstractmethod\n    def draw(self): pass",
+                        "class Shape:\n    @abstract\n    def draw(self): return \"Abstract\"",
+                        "import abc\nclass Shape:\n    def __init__(self):\n        abc.init_abstract_method(self.draw)"
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Diagrams",
+                    question: "Examine the following Unified Modeling Language (UML) notation structure. What relationship context does the dashed connector line with an open arrow represent?",
+                    diagram: "[ OrderProcessor ] - - - - - > [ InventoryDB ]\n                  (Dashed Line, Open Arrow)",
+                    options: [
+                        "Inheritance; matching an explicit parent-to-child structural trace.",
+                        "Composition; binding the database lifecycle directly to the processor object.",
+                        "Dependency; indicating OrderProcessor temporarily uses or references the InventoryDB interface.",
+                        "Implementation; verifying conformance to an abstract structural contract."
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Theory",
+                    question: "What does the 'self' keyword represent mechanically when a constructor method instantiates a class template into memory?",
+                    options: [
+                        "A global module pointer reference logging class definition coordinates.",
+                        "An explicit positional reference link mapping data and actions directly to that specific allocated tracking object instance in memory.",
+                        "An internal function that triggers name mangling protocols for all variables.",
+                        "A compiler constraint variable locking data types into static definitions."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Theory",
+                    question: "What occurs during a 'Regression Test' validation cycle, and why is it prioritized after injecting system configuration patches?",
+                    options: [
+                        "It analyzes mesh triangle normals for rendering accuracy anomalies.",
+                        "It reviews business rules definitions with external client stakeholders.",
+                        "It re-runs complete historical test inventories to confirm that newly injected patches did not break legacy structural functionality.",
+                        "It deletes the application local storage cache database systematically."
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Code Analysis",
+                    question: "A script contains an operation using Time.deltaTime during a coordinate shifting sequence. What is the explicit engineering goal of integrating this variable?",
+                    options: [
+                        "To guarantee that movement calculations are frame-rate independent, ensuring consistent speed across different hardware setups.",
+                        "To force the calculation engine onto the FixedUpdate timeline tracker loop.",
+                        "To activate private visibility encapsulation parameters.",
+                        "To isolate composite key rows inside database transaction tables."
+                    ],
+                    correct: 0 // Option A
+                },
+                {
+                    category: "Theory",
+                    question: "What constitutes 'Over-Generalisation' in structural Object-Oriented Analysis and Design workflows?",
+                    options: [
+                        "Failing to consolidate shared variables, triggering duplication errors across child nodes.",
+                        "Forcing an irrelevant attribute or method high up into a shared parent superclass that does not logically apply to all children down the hierarchy.",
+                        "Failing to specify public getter doors for mangled tracking data fields.",
+                        "Deploying automated CI/CD pipelines without initializing local validation testing units."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Theory",
+                    question: "Which parameters are mandatory components when documenting a professional software engineering Manual Test Case configuration spreadsheet tracker?",
+                    options: [
+                        "Blender Mesh Type, UV mapping arrays, Face Normals counts, Hot-reload state.",
+                        "Test Case ID, Description, Preconditions, Test Steps, Test Data, Expected Result, Actual Result, and Status.",
+                        "Primary Key, Foreign Key, Cardinality constraints, Name Mangling parameters.",
+                        "Dynamic Binding variables, Static Overloading declarations, Abstract decorators."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Code Analysis",
+                    question: "Analyze the structural code logic below. What will be output to the terminal interface when this code executes?",
+                    code: "class Parent:\n    def compute(self):\n        return 10\n\nclass Child(Parent):\n    def compute(self):\n        return super().compute() + 5\n\nobj = Child()\nprint(obj.compute())",
+                    options: [
+                        "10; because subclasses prioritize parent methods during static linkage.",
+                        "TypeError; super calls require explicit instance parameters under runtime constraints.",
+                        "5; because overriding clears prior computational variables.",
+                        "15; because the child overrides the method but leverages super() to build on the parent's base value."
+                    ],
+                    correct: 3 // Option D
+                },
+                {
+                    category: "Theory",
+                    question: "What is the technical objective of utilizing Getters and Setters inside an encapsulated data class structure layout?",
+                    options: [
+                        "To link relational database tracking attributes to 3D coordinate spaces.",
+                        "To provide controlled access points ('doors') to read or safely modify private variables, often including validation logic.",
+                        "To bypass name mangling parameters during early system compilation routines.",
+                        "To switch tracking methods from Update configurations to FixedUpdate execution trees."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Theory",
+                    question: "What relationship configuration is established by a Many-to-Many relationship structure between two entities in a database design model, and how is it resolved structurally?",
+                    options: [
+                        "It links records via direct embedded attribute streams within one master row map.",
+                        "It connects instances directly using dual foreign keys injected into both core files.",
+                        "It maps entities through a separate linking/junction table that converts the relationship into two distinct One-to-Many paths.",
+                        "It enforces a strict parent-child inheritance tree using hollow triangular arrowheads."
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Code Analysis",
+                    question: "A system engineer checks a script and discovers this implementation loop configuration. What design architecture style does this match?",
+                    code: "class SystemEngine:\n    def __init__(self):\n        self.__sub_components = []\n    def append_part(self, component):\n        self.__sub_components.append(component)",
+                    options: [
+                        "Inheritance baseline design strategy.",
+                        "Aggregation; since components are appended dynamically and their lifecycles are decoupled from the engine's creation.",
+                        "Strict Abstract Interface model enforcement.",
+                        "Name Mangling resolution paradigm."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Theory",
+                    question: "When discussing 'Dynamic Binding' (Late Binding) in polymorphic object arrays, when does the computational environment choose which method implementation block to trigger?",
+                    options: [
+                        "Early during initial project directory compilation steps.",
+                        "At runtime, determined dynamically based on the exact object type currently held by the active reference link.",
+                        "During task definition requirement scoping reviews.",
+                        "When data attributes pass through automated name mangling protocols."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Theory",
+                    question: "What is the precise structural purpose of a 'Junction Table' inside a relational database configuration map?",
+                    options: [
+                        "To cache stack properties during complex multi-statement join queries.",
+                        "To house foreign keys that resolve a Many-to-Many entity relationship into two scalable One-to-Many pathways.",
+                        "To act as a secure public door filtering private encapsulated attribute sets.",
+                        "To synchronize mesh data coordinates between structural graphic components."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Code Analysis",
+                    question: "Review the system framework layout below. What will be output to the screen console display terminal?",
+                    code: "class Core:\n    def log(self): print(\"Alpha\", end=\" \")\n\nclass Extension(Core):\n    def log(self): print(\"Beta\", end=\" \")\n\nitems = [Core(), Extension(), Core()]\nfor i in items:\n    i.log()",
+                    options: [
+                        "Alpha Alpha Alpha",
+                        "Beta Beta Beta",
+                        "Alpha Beta Alpha; demonstrating dynamic binding where each object responds with its own overridden implementation.",
+                        "Alpha Beta Beta"
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Theory",
+                    question: "What does a 'Coupling' index quantify when evaluating a multi-class system architecture profile?",
+                    options: [
+                        "The internal cohesion of structural routines enclosed in an abstract class capsule.",
+                        "The level of raw interdependence, connectivity, and cross-reference reliance linking distinct modules together.",
+                        "The numerical cardinality boundaries constrained by a database record trace path.",
+                        "The generation rate of perpendicular face lighting vectors inside graphics files."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Theory",
+                    question: "Which methodology accurately details the 'Top-Down' system analysis and decomposition architectural development design track strategy?",
+                    options: [
+                        "Building tiny low-level primitive classes first, then grouping them to form macro subsystems.",
+                        "Baking light vectors directly into face normals schemas inside local model databases.",
+                        "Starting with the high-level system view and systematically breaking it down into increasingly detailed sub-components and specialized classes.",
+                        "Writing automated unit tests before defining functional task requirements documentation."
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Theory",
+                    question: "In object-oriented architectures, what constitutes an 'Interface' template, and what contract rule does it enforce?",
+                    options: [
+                        "A database mapping pattern tracking compound composite data identifiers.",
+                        "A visual 2D display canvas bounding screen UI elements inside layout containers.",
+                        "A rigid contract that explicitly defines what method signatures a class must provide, without specifying the internal code blocks for them.",
+                        "A specific visibility wrapper keyword that alters internal variable syntax names automatically."
+                    ],
+                    correct: 2 // Option C
+                },
+                {
+                    category: "Code Analysis",
+                    question: "Study this variable processing tracking setup block. What structural verification requirement is being validated across the defensive conditional checks?",
+                    code: "def coordinate_system(source_object, target_object):\n    if source_object is None or target_object is None:\n        return False",
+                    options: [
+                        "Ensuring data fields match mangled double underscore nomenclature schemas.",
+                        "Structural Verification; validating both object instances exist as concrete entities in memory before initiating message passing workflows.",
+                        "Verifying that the components operate on the FixedUpdate frame timeline constraint.",
+                        "Validating database reference rows conform to composite key boundaries."
+                    ],
+                    correct: 1 // Option B
+                },
+                {
+                    category: "Theory",
+                    question: "What architectural asset behavior is guaranteed when a system developer confirms that a software module structure is fully 'Forwards Compatible'?",
+                    options: [
+                        "The logic compiles flawlessly inside abstract parent constructors using super links.",
+                        "Legacy engines can read data arrays created by modern updated software versions without crashing.",
+                        "Modern updated software editions retain the capacity to open and interpret legacy data schemas accurately.",
+                        "The component maps physics constraints strictly within automated frame updates."
+                    ],
+                    correct: 1 // Option B
+                }
+            ];
+
+            // Core State Trackers
+            let activeIndex = 0;
+            let userSelectionRecords = new Array(questionsDataset.length).fill(null);
+
+            const questionAnchor = document.getElementById('dynamic-question-anchor');
+            const optionsAnchor = document.getElementById('options-anchor');
+            const nextBtn = document.getElementById('next-item-btn');
+            const indexDisplay = document.getElementById('question-index-display');
+            const categoryBadge = document.getElementById('category-badge');
+            const progressBar = document.getElementById('ui-progress');
+            const quizCard = document.getElementById('quiz-card');
+            const summaryCard = document.getElementById('summary-card');
+            const finalScore = document.getElementById('final-score-display');
+
+            const renderCurrentItem = () => {
+                // Clear active layout inputs
+                questionAnchor.innerHTML = '';
+                optionsAnchor.innerHTML = '';
+                nextBtn.disabled = true;
+
+                if (activeIndex >= questionsDataset.length) {
+                    processQuizCompletion();
+                    return;
+                }
+
+                const currentItem = questionsDataset[activeIndex];
+
+                // Update Progress Metric Visuals
+                const progressPercentage = (activeIndex / questionsDataset.length) * 100;
+                progressBar.style.width = `${progressPercentage}%`;
+                indexDisplay.textContent = `Item Verification Loop: ${activeIndex + 1} / ${questionsDataset.length}`;
+                categoryBadge.textContent = currentItem.category;
+
+                // Construct Element Context Traces
+                const questionTextEl = document.createElement('div');
+                questionTextEl.className = 'question-text';
+                questionTextEl.textContent = currentItem.question;
+                questionAnchor.appendChild(questionTextEl);
+
+                if (currentItem.code) {
+                    const codeEl = document.createElement('pre');
+                    codeEl.className = 'code-snippet';
+                    codeEl.textContent = currentItem.code;
+                    questionAnchor.appendChild(codeEl);
+                }
+
+                if (currentItem.diagram) {
+                    const diagramEl = document.createElement('pre');
+                    diagramEl.className = 'diagram-mock';
+                    diagramEl.textContent = currentItem.diagram;
+                    questionAnchor.appendChild(diagramEl);
+                }
+
+                // Append Selection Cards
+                currentItem.options.forEach((optionText, idx) => {
+                    const optionCard = document.createElement('div');
+                    optionCard.className = 'option-card';
+                    optionCard.setAttribute('data-index', idx);
+
+                    optionCard.innerHTML = `
+                        <div class="radio-node"></div>
+                        <div class="option-text"><strong>${String.fromCharCode(65 + idx)}.</strong> ${optionText}</div>
+                    `;
+
+                    optionCard.addEventListener('click', () => {
+                        document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                        optionCard.classList.add('selected');
+                        userSelectionRecords[activeIndex] = idx;
+                        nextBtn.disabled = false;
+                    });
+
+                    optionsAnchor.appendChild(optionCard);
+                });
+
+                // Tweak button copy on final question link
+                if (activeIndex === questionsDataset.length - 1) {
+                    nextBtn.innerHTML = 'Finalize Assessment Matrix <i class="fa-solid fa-graduation-cap"></i>';
+                } else {
+                    nextBtn.innerHTML = 'Lock Answer & Advance <i class="fa-solid fa-arrow-right"></i>';
+                }
+            };
+
+            const processQuizCompletion = () => {
+                progressBar.style.width = '100%';
+                quizCard.style.display = 'none';
+                summaryCard.style.display = 'block';
+
+                // Audit correct answers
+                let correctTally = 0;
+                questionsDataset.forEach((item, index) => {
+                    if (userSelectionRecords[index] === item.correct) {
+                        correctTally++;
+                    }
+                });
+
+                finalScore.textContent = `${correctTally} / ${questionsDataset.length}`;
+
+                // Sync with state schema
+                currentState.scores.mcq = {
+                    score: correctTally,
+                    total: questionsDataset.length,
+                    status: 'Complete'
+                };
+
+                if (currentState.currentPhase === 2) {
+                    currentState.currentPhase = 3;
+                }
+
+                localStorage.setItem('oop_exam_state', JSON.stringify(currentState));
+            };
+
+            nextBtn.addEventListener('click', () => {
+                activeIndex++;
+                renderCurrentItem();
+            });
+
+            document.getElementById('exit-phase-btn').addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                if (confirm('Are you absolutely certain you want to purge your current structural progress across all modules? This action cannot be undone.')) {
+                    localStorage.removeItem('oop_exam_state');
+                    window.location.href = 'index.html';
+                }
+            });
+
+            // Initialize compilation loop
+            renderCurrentItem();
+        });
+    </script>
+</body>
+</html>

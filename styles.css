@@ -1,0 +1,401 @@
+/* ==========================================================================
+   1. Design Tokens & Global Root Resets (British English Standard)
+   ========================================================================== */
+   :root {
+    --bg-main: #0a0f1d;
+    --sidebar-bg: rgba(13, 21, 38, 0.6);
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.07);
+    --glass-hover-border: rgba(255, 255, 255, 0.15);
+    
+    /* Neon Aesthetic Color Palette */
+    --accent-cyan: #00f2fe;
+    --accent-violet: #4facfe;
+    --accent-glow: rgba(0, 242, 254, 0.35);
+    
+    /* Text Typography Vectors */
+    --text-primary: #f1f5f9;
+    --text-muted: #94a3b8;
+    
+    /* System Feedback Badges */
+    --status-pending: #f59e0b;
+    --status-active: #3b82f6;
+    --status-complete: #10b981;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    overflow-x: hidden;
+}
+
+/* ==========================================================================
+   2. Epitome Glassmorphism Sidebar Structure
+   ========================================================================== */
+.sidebar {
+    width: 280px;
+    height: 100vh;
+    background: var(--sidebar-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem 1.5rem;
+    position: fixed;
+    z-index: 100;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+}
+
+.glowing-icon {
+    color: var(--accent-cyan);
+    text-shadow: 0 0 12px var(--accent-glow);
+}
+
+.nav-links {
+    list-style: none;
+    margin-top: -4rem;
+}
+
+.nav-links li {
+    margin-bottom: 0.75rem;
+}
+
+.nav-links a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+}
+
+.nav-links a:hover, 
+.nav-links li.active a {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--glass-border);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.nav-links li.active a {
+    border-color: rgba(0, 242, 254, 0.4);
+    background: linear-gradient(90deg, rgba(79, 172, 254, 0.1), rgba(0, 242, 254, 0.05));
+    color: var(--accent-cyan);
+}
+
+/* ==========================================================================
+   3. Main Application Canvas Panels
+   ========================================================================== */
+.dashboard-container {
+    margin-left: 280px;
+    flex-grow: 1;
+    padding: 3rem;
+    max-width: 1400px;
+    width: calc(100% - 280px);
+}
+
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    transition: border-color 0.4s ease;
+}
+
+.glass-panel:hover {
+    border-color: var(--glass-hover-border);
+}
+
+.glowing-border {
+    border-color: rgba(0, 242, 254, 0.25);
+    box-shadow: 0 0 30px rgba(0, 242, 254, 0.05), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+/* Typography & Headers */
+.header-panel h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.5px;
+}
+
+.header-panel p {
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-size: 1.05rem;
+}
+
+h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* ==========================================================================
+   4. Split Grid Content Modules
+   ========================================================================== */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Protocol / Rules List Styling */
+.protocols-list {
+    list-style: none;
+}
+
+.protocols-list li {
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.text-accent {
+    color: var(--accent-cyan);
+    margin-top: 0.2rem;
+}
+
+/* ==========================================================================
+   5. Interactive Buttons & Controls
+   ========================================================================== */
+.cta-wrapper {
+    margin-top: 2.5rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
+    border: none;
+    color: #040814;
+    padding: 1rem 2rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glowing-btn {
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 30px rgba(0, 242, 254, 0.6);
+    filter: brightness(1.1);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    padding: 0.75rem 1.2rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    color: var(--text-primary);
+    border-color: rgba(239, 68, 68, 0.4);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+/* ==========================================================================
+   6. Live Metrics Data Table Structure
+   ========================================================================== */
+.marks-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+.marks-table th, 
+.marks-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.marks-table th {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.marks-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.01);
+}
+
+/* Status Badges */
+.badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--status-pending);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.badge-active {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--status-active);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.badge-complete {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--status-complete);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.score-display {
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-weight: 600;
+    color: var(--accent-cyan);
+}
+
+.total-score-row {
+    font-weight: 700;
+}
+
+.total-score-row td {
+    border-bottom: none;
+    padding-top: 1.5rem;
+}
+
+#aggregate-score {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+/* ==========================================================================
+   7. Sequential Linear Timeline Component
+   ========================================================================== */
+.timeline-panel {
+    margin-bottom: 0;
+}
+
+.timeline-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 2.5rem 1rem 1rem 1rem;
+    position: relative;
+}
+
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.step-node {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #0f172a;
+    border: 2px solid var(--glass-border);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.05rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.step-label {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: color 0.3s ease;
+    white-space: nowrap;
+}
+
+.timeline-line {
+    flex-grow: 1;
+    height: 2px;
+    background: var(--glass-border);
+    margin: 0 -10px;
+    margin-top: -1.2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Timeline State Modifiers */
+.timeline-step.step-active .step-node {
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    box-shadow: 0 0 15px var(--accent-glow), inset 0 0 8px var(--accent-glow);
+}
+
+.timeline-step.step-active .step-label {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.timeline-step.step-complete .step-node {
+    background: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+    color: #040814;
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.timeline-step.step-complete .step-label {
+    color: var(--accent-cyan);
+}

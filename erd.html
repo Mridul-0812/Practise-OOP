@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 5: Class Diagram & UML Interpretation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Shared Core Palette & Architecture */
+        :root {
+            --bg-primary: #0a0b10;
+            --bg-secondary: #12131a;
+            --glass-panel: rgba(20, 22, 36, 0.6);
+            --neon-blue: #00f0ff;
+            --neon-green: #39ff14;
+            --neon-purple: #bd00ff;
+            --neon-orange: #ff9f1c;
+            --text-main: #e2e8f0;
+            --text-muted: #8a99ad;
+            --border-glow: rgba(0, 240, 255, 0.15);
+            --border-solid: rgba(255, 255, 255, 0.08);
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Alignment */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-solid);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0;
+            z-index: 100;
+        }
+        .sidebar-brand {
+            padding: 0 24px 24px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            border-bottom: 1px solid var(--border-solid);
+        }
+        .glowing-icon {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+        .nav-links {
+            list-style: none;
+            padding: 24px 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+        .nav-links li {
+            padding: 4px 24px;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .nav-links li.active a, .nav-links a:hover {
+            color: var(--neon-blue);
+            background: rgba(0, 240, 255, 0.05);
+        }
+        .sidebar-footer {
+            padding: 0 24px;
+        }
+
+        /* Main Core Container */
+        .dashboard-container {
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            width: calc(100% - var(--sidebar-width));
+            box-sizing: border-box;
+        }
+
+        .glass-panel {
+            background: var(--glass-panel);
+            border: 1px solid var(--border-solid);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(12px);
+            margin-bottom: 32px;
+        }
+        .glowing-border {
+            border-color: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .header-panel h1 {
+            margin: 0 0 8px 0;
+            font-size: 2.2rem;
+            color: #fff;
+        }
+        .header-panel p {
+            margin: 0;
+            color: var(--text-muted);
+        }
+
+        /* Interactive Diagram Core Arena styling */
+        .workspace-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 32px;
+        }
+
+        .challenge-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .challenge-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-solid);
+            padding: 14px 20px;
+            border-radius: 10px;
+            color: var(--text-muted);
+            text-align: left;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        .challenge-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+        .challenge-btn.active {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: var(--neon-blue);
+            color: var(--neon-blue);
+        }
+        .indicator-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--neon-orange);
+        }
+        .indicator-dot.passed {
+            background: var(--neon-green);
+            box-shadow: 0 0 8px var(--neon-green);
+        }
+
+        /* Diagnostic Graphic Blocks */
+        .diagram-arena {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .graphic-container {
+            background: #07080e;
+            border: 1px solid var(--border-solid);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 380px;
+            position: relative;
+            overflow: auto;
+        }
+
+        /* UML / ERD Text Box Rendering CSS representation */
+        .uml-box {
+            background: #161925;
+            border: 2px solid #a0aec0;
+            border-radius: 4px;
+            width: 210px;
+            color: #fff;
+            font-family: 'Consolas', monospace;
+            font-size: 13px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .uml-title {
+            text-align: center;
+            font-weight: bold;
+            padding: 8px;
+            border-bottom: 2px solid #a0aec0;
+            background: rgba(255,255,255,0.03);
+        }
+        .uml-compartment {
+            padding: 8px;
+            border-bottom: 1px solid #4a5568;
+            min-height: 40px;
+            line-height: 1.4;
+        }
+        .uml-compartment:last-child {
+            border-bottom: none;
+        }
+
+        /* ERD Crow foot representation entity styling */
+        .erd-box {
+            background: #1a1528;
+            border: 2px solid var(--neon-purple);
+            border-radius: 6px;
+            width: 220px;
+            font-family: 'Segoe UI', sans-serif;
+            box-shadow: 0 4px 20px rgba(189, 0, 255, 0.15);
+        }
+        .erd-title {
+            background: var(--neon-purple);
+            color: #000;
+            font-weight: 700;
+            padding: 6px 12px;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+        .erd-fields {
+            padding: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .pk-field { color: #f6ad55; font-weight: bold; }
+        .fk-field { color: #63b3ed; font-weight: bold; }
+
+        /* Interface Inputs Form Fields */
+        .interactive-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: rgba(255,255,255,0.01);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-solid);
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .input-group label {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+        .input-group select, .input-group input[type="text"] {
+            background: #0f111a;
+            border: 1px solid var(--border-solid);
+            padding: 12px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        .input-group select:focus, .input-group input[type="text"]:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+        }
+
+        /* Buttons & Control Suite */
+        .btn-primary {
+            background: var(--neon-blue);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-solid);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.03);
+            color: #fff;
+        }
+
+        .feedback-box {
+            padding: 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+            margin-top: 12px;
+        }
+        .feedback-success {
+            background: rgba(57, 255, 20, 0.1);
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+        }
+        .feedback-error {
+            background: rgba(255, 159, 28, 0.1);
+            border: 1px solid var(--neon-orange);
+            color: var(--neon-orange);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-code-branch glowing-icon"></i>
+            <span>SWE Engine</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+            <li><a href="definitions.html"><i class="fa-solid fa-book"></i> 1. Definitions</a></li>
+            <li><a href="mcq.html"><i class="fa-solid fa-list-check"></i> 2. MCQs</a></li>
+            <li><a href="saq.html"><i class="fa-solid fa-pen-to-square"></i> 3. Short Answer</a></li>
+            <li><a href="code.html"><i class="fa-solid fa-terminal"></i> 4. Code Practical</a></li>
+            <li class="active"><a href="erd.html"><i class="fa-solid fa-diagram-project"></i> 5. Class & ERDs</a></li>
+            <li><a href="test.html"><i class="fa-solid fa-vial"></i> 6. Testing Matrices</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <button id="reset-btn" class="btn-secondary"><i class="fa-solid fa-rotate-right"></i> Reset Progress</button>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        <header class="glass-panel glowing-border header-panel">
+            <h1>Phase 5: Class Diagram & UML Interpretation Architecture</h1>
+            <p>Deconstruct database structural relationships, establish relational mappings, and analyze UML modeling logic across 10 core system blueprints.</p>
+        </header>
+
+        <div class="workspace-layout">
+            <aside class="challenge-selector" id="selectors-container">
+                </aside>
+
+            <section class="diagram-arena">
+                <div class="glass-panel" style="margin-bottom: 0;">
+                    <h2 id="challenge-title" style="margin-top:0; color:#fff;">Loading Matrix Challenge...</h2>
+                    <p id="challenge-desc" style="color: var(--text-muted); margin-bottom:24px;">...</p>
+                    
+                    <div class="graphic-container" id="canvas-view">
+                        </div>
+                </div>
+
+                <div class="glass-panel interactive-form">
+                    <h3 style="margin-top:0; border-bottom:1px solid var(--border-solid); padding-bottom:12px;">Architectural Verification Form</h3>
+                    <div id="form-fields-container">
+                        </div>
+                    
+                    <div style="display:flex; justify-content: space-between; align-items:center; margin-top:12px;">
+                        <button id="btn-reveal-solution" class="btn-secondary">Reveal Structural Schema</button>
+                        <button id="btn-verify-answer" class="btn-primary">Verify Schema Alignment <i class="fa-solid fa-circle-check"></i></button>
+                    </div>
+
+                    <div class="feedback-box" id="feedback-arena"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const challengeMatrix = [
+            {
+                title: "Question 1: Class Diagram Relationship Verification",
+                desc: "Identify the missing relationship link connecting the Player character tracking block with the core structural Inventory system. Choose the proper design assignment below.",
+                type: "dropdown",
+                options: ["Association", "Aggregation", "Composition", "Generalisation"],
+                correct: "Composition",
+                render: (userInput) => {
+                    let markerEnd = "url(#base-line)";
+                    let dashArray = "none";
+                    if (userInput === "Composition") markerEnd = "url(#rhombus-filled)";
+                    if (userInput === "Aggregation") markerEnd = "url(#rhombus-empty)";
+                    if (userInput === "Generalisation") markerEnd = "url(#triangle-empty)";
+                    if (userInput === "Association") markerEnd = "url(#arrow-open)";
+
+                    return `
+                    <svg width="600" height="300" style="background:transparent;">
+                        <defs>
+                            <marker id="rhombus-filled" markerWidth="20" markerHeight="20" refX="0" refY="10" orient="auto">
+                                <path d="M0,10 L10,5 L20,10 L10,15 Z" fill="#bd00ff" />
+                            </marker>
+                            <marker id="rhombus-empty" markerWidth="20" markerHeight="20" refX="0" refY="10" orient="auto">
+                                <path d="M0,10 L10,5 L20,10 L10,15 Z" fill="none" stroke="#00f0ff" stroke-width="2"/>
+                            </marker>
+                            <marker id="triangle-empty" markerWidth="20" markerHeight="20" refX="0" refY="10" orient="auto">
+                                <path d="M0,5 L10,10 L0,15 Z" fill="none" stroke="#fff" stroke-width="2"/>
+                            </marker>
+                            <marker id="arrow-open" markerWidth="20" markerHeight="20" refX="0" refY="10" orient="auto">
+                                <path d="M0,5 L10,10 L0,15" fill="none" stroke="#39ff14" stroke-width="2"/>
+                            </marker>
+                        </defs>
+                        <foreignObject x="20" y="50" width="200" height="180">
+                            <div class="uml-box">
+                                <div class="uml-title">Player</div>
+                                <div class="uml-compartment">- playerID: String<br>- health: int</div>
+                                <div class="uml-compartment">+ move()<br>+ takeDamage()</div>
+                            </div>
+                        </foreignObject>
+                        
+                        <line x1="380" y1="130" x2="225" y2="130" stroke="${userInput === 'Composition' ? '#bd00ff' : userInput === 'Aggregation' ? '#00f0ff' : '#a0aec0'}" stroke-width="3" stroke-dasharray="${dashArray}" marker-start="${markerEnd}" />
+                        
+                        <foreignObject x="380" y="50" width="200" height="180">
+                            <div class="uml-box" style="border-color: var(--neon-blue);">
+                                <div class="uml-title">Inventory</div>
+                                <div class="uml-compartment">- slots: List<br>- weightLimit: float</div>
+                                <div class="uml-compartment">+ addItem()<br>+ dropItem()</div>
+                            </div>
+                        </foreignObject>
+                    </svg>`;
+                }
+            },
+            {
+                title: "Question 2: Multiplicity Bounds Evaluation",
+                desc: "An enterprise Warehouse blueprint contains a tracking relationship linked to an internal StockItem ledger. Input the missing multiplicity parameter inside the text field below to map a standard 'one-to-many' constraint signature.",
+                type: "text",
+                placeholder: "e.g., 1..* or 0..1",
+                correct: "1..*",
+                render: (userInput) => {
+                    return `
+                    <svg width="600" height="300" style="background:transparent;">
+                        <foreignObject x="20" y="50" width="200" height="160">
+                            <div class="uml-box">
+                                <div class="uml-title">Warehouse</div>
+                                <div class="uml-compartment">- locationCode: str</div>
+                                <div class="uml-compartment">+ dispatchBatch()</div>
+                            </div>
+                        </foreignObject>
+                        
+                        <line x1="220" y1="120" x2="380" y2="120" stroke="#00f0ff" stroke-width="2" />
+                        <text x="230" y="110" fill="#fff" font-size="14">1</text>
+                        <text x="340" y="110" fill="var(--neon-orange)" font-size="16" font-weight="bold">${userInput || "?"}</text>
+                        
+                        <foreignObject x="380" y="50" width="200" height="160">
+                            <div class="uml-box">
+                                <div class="uml-title">StockItem</div>
+                                <div class="uml-compartment">- skuNumber: str<br>- quantity: int</div>
+                                <div class="uml-compartment">+ updateCount()</div>
+                            </div>
+                        </foreignObject>
+                    </svg>`;
+                }
+            },
+            {
+                title: "Question 3: Generalisation Arrow Validation",
+                desc: "An engineering schema models a specialized structural hierarchy where ElectricVehicle derives core properties directly from a generalized base Vehicle tracking structure. Specify the mapping relationship type.",
+                type: "dropdown",
+                options: ["Dependency", "Aggregation", "Generalisation", "Composition"],
+                correct: "Generalisation",
+                render: (userInput) => {
+                    let markerEnd = "none";
+                    if (userInput === "Generalisation") markerEnd = "url(#triangle-white)";
+                    return `
+                    <svg width="600" height="340" style="background:transparent;">
+                        <defs>
+                            <marker id="triangle-white" markerWidth="16" markerHeight="16" refX="8" refY="8" orient="auto">
+                                <polygon points="0,0 16,8 0,16" fill="#07080e" stroke="#fff" stroke-width="2"/>
+                            </marker>
+                        </defs>
+                        <foreignObject x="200" y="20" width="200" height="120">
+                            <div class="uml-box" style="border-color:#fff;">
+                                <div class="uml-title">Vehicle</div>
+                                <div class="uml-compartment"># registration: str</div>
+                                <div class="uml-compartment">+ ignite()</div>
+                            </div>
+                        </foreignObject>
+                        
+                        <line x1="300" y1="200" x2="300" y2="142" stroke="#fff" stroke-width="2" marker-end="${markerEnd}"/>
+                        
+                        <foreignObject x="200" y="200" width="200" height="120">
+                            <div class="uml-box" style="border-color: var(--neon-blue);">
+                                <div class="uml-title">ElectricVehicle</div>
+                                <div class="uml-compartment">- batteryCapacity: int</div>
+                                <div class="uml-compartment">+ chargePack()</div>
+                            </div>
+                        </foreignObject>
+                    </svg>`;
+                }
+            },
+            {
+                title: "Question 4: ERD Cardinality Structural Assessment",
+                desc: "Examine this relational database schema tracking structured entities across a Department tracking container mapping into individual Employee records. Evaluate the connection endpoint and determine if this represents a 1..1, 1..*, or *..* data constraint layout.",
+                type: "dropdown",
+                options: ["One-to-One (1..1)", "One-to-Many (1..*)", "Many-to-Many (*..*)"],
+                correct: "One-to-Many (1..*)",
+                render: (userInput) => {
+                    return `
+                    <svg width="600" height="260" style="background:transparent;">
+                        <foreignObject x="20" y="40" width="200" height="150">
+                            <div class="erd-box">
+                                <div class="erd-title">Department</div>
+                                <div class="erd-fields">
+                                    <span class="pk-field">PK</span> dept_id (INT)<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;dept_name (VARCHAR)
+                                </div>
+                            </div>
+                        </foreignObject>
+                        
+                        <line x1="220" y1="100" x2="380" y2="100" stroke="#bd00ff" stroke-width="2"/>
+                        ${userInput === "One-to-Many (1..*)" ? `
+                            <line x1="365" y1="85" x2="380" y2="100" stroke="var(--neon-green)" stroke-width="3"/>
+                            <line x1="365" y1="115" x2="380" y2="100" stroke="var(--neon-green)" stroke-width="3"/>
+                            <line x1="365" y1="85" x2="365" y2="115" stroke="var(--neon-green)" stroke-width="2"/>
+                        ` : `
+                            <circle cx="360" cy="100" r="4" fill="none" stroke="#fff" stroke-width="2"/>
+                        `}
+                        
+                        <foreignObject x="380" y="40" width="200" height="150">
+                            <div class="erd-box">
+                                <div class="erd-title">Employee</div>
+                                <div class="erd-fields">
+                                    <span class="pk-field">PK</span> emp_id (INT)<br>
+                                    <span class="fk-field">FK</span> dept_id (INT)<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;emp_name (VARCHAR)
+                                </div>
+                            </div>
+                        </foreignObject>
+                    </svg>`;
+                }
+            },
+            {
+                title: "Question 5: Missing Foreign Key Mapping Field",
+                desc: "Analyze the database mapping topology link connecting an Order table record with a Customer profile table. Identify the exact attribute string parameter that must be injected into the empty row to achieve clean entity referential data integrity tracking.",
+                type: "text",
+                placeholder: "e.g., customer_id",
+                correct: "customer_id",
+                render: (userInput) => {
+                    return `
+                    <svg width="600" height="260" style="background:transparent;">
+                        <foreignObject x="20" y="30" width="200" height="160">
+                            <div class="erd-box" style="border-color: var(--neon-blue);">
+                                <div class="erd-title" style="background: var(--neon-blue);">Customer</div>
+                                <div class="erd-fields">
+                                    <span class="pk-field">PK</span> customer_id (INT)<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;email_addr (VARCHAR)
+                                </div>
+                            </div>
+                        </foreignObject>
+                        
+                        <line x1="220" y1="90" x2="380" y2="90" stroke="#00f0ff" stroke-width="2" />
+                        
+                        <foreignObject x="380" y="30" width="200" height="180">
+                            <div class="erd-box">
+                                <div class="erd-title">Orders</div>
+                                <div class="erd-fields">
+                                    <span class="pk-field">PK</span> order_id (INT)<br>
+                                    <span class="fk-field">FK</span> ${userInput ? `<span style="color:var(--neon-green); font-weight:bold;">${userInput}</span>` : '___________ ?'}<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;order_date (DATE)
+                                </div>
+                            </div>
+                        </foreignObject>
+                    </svg>`;
+                }
+            },
+            {
+                title: "Question 6: Realisation Architecture Identification",
+                desc: "Examine this blueprint mapping out an abstract contractual Interface component structure named PrintMechanics being materialized inside an active system class processing routine named LaserPrinter. Identify the accurate line structural formatting required by British standard UML modeling conventions.",
+                type: "dropdown",
+                options: ["Solid Line // Open Arrow", "Dashed Line // Hollow Triangle", "Solid Line // Filled Diamond", "Dashed Line // Open Arrow"],
+                correct: "Dashed Line // Hollow Triangle",
+                render: (userInput) => {
+                    let dashPattern = "none";
+                    let arrowHead = "url(#base-line)";
+                    if (userInput === "Dashed Line // Hollow Triangle") {
+                        dashPattern = "8,4";
+                        arrowHead = "url(#hollow-tri)";
+                    } else if (userInput === "Dashed Line // Open Arrow") {
+                        dashPattern = "4,4";
+                    }
+                    return `
+                    <svg width="600" height="320" style="background:transparent;">
+                        <defs>
+                            <marker id="hollow-tri" markerWidth="16" markerHeight="16" refX="14" refY="8" orient="auto">
+                                <polygon points="2,2 14,8 2,14" fill="#07080e" stroke="#fff" stroke-width="2"/>
+                            </marker>
+                        </defs>
+                        <foreignObject x="200" y="20" width="200" height="110">
+                            <div class="uml-box" style="border-style: dashed; border-color: var(--neon-orange);">
+                                <div class="uml-title" style="font-style: italic;">&lt;&lt;interface&gt;&gt;<br>PrintMechanics</div>
+                                <div class="uml-compartment">+ printPage()</div>
+                            </div>
+                        </foreignObject>
+                        
+                        <line x1="300" y1="200" x2="300" y2="135" stroke="#fff" stroke-width="2" stroke-dasharray="${dashPattern}" marker-end="${arrowHead}"/>
+                        
+                        <foreignObject x="200" y="200" width="200" height="110">
+                            <div class="uml-box">
+                                <div class="uml-title">LaserPrinter</div>
+                                <div class="uml-compartment">+ printPage()</div>
+                            </div>
+                        </foreignObject>
+                    </svg>`;
+                }
+            },
+            {
+                title: "Question 7: Weak Aggregation Structural Matrix",
+                desc: "An institution object blueprint aggregates Teacher entity instances. However, if the active University instance container falls out of scope, the individual Teacher parts persist independently. Choose the relationship format that accurately represents this weak structural lifecycle linkage.",
+                type: "dropdown",
+                options: ["Aggregation", "Composition", "Generalisation", "Dependency"],
+                correct: "Aggregation",
+                render: (userInput) => {
+                    let fillVal = "none";
+                    if (userInput === "Composition") fillVal = "#bd00ff";
+                    if (userInput === "Aggregation") fillVal = "#07080e";
+                    return `
+                    <svg width="600" height="260" style="background:transparent;">
+                        <defs>
+                            <marker id="diamond-marker" markerWidth="24" markerHeight="24" refX="0" refY="12" orient="auto">
+                                <polygon points="0,12 10,6 20,12 10,18" fill="${fillVal}" stroke="#00f0ff" stroke-width="2"/>
+                            </marker>
+                        </defs>
+                        <foreignObject x="20" y="50" width="200" height="140">
+                            <div class="uml-box">
+                                <div class="uml-title">University</div>
+                                <div class="uml-compartment">- name: String</div>
+                            </div>
+                        </foreignObject>
+                        
+                        <line x1="380" y1="110" x2="225" y2="110" stroke="#00f0ff" stroke-width="3" marker-start="${userInput ? 'url(#diamond-marker)' : 'none'}"/>
+                        
+                        <foreignObject x="380" y="50" width="200" height="140">
+                            <div class="uml-box">
+                                <div class="uml-title">Teacher</div>
+                                <div class="uml-compartment">- employeeID: str</div>
+                            </div>
+                        </foreignObject>
+                    </svg>`;
+                }
+            },
+            {
+                title: "Question 8: Junction Entity Resolving Multi-tier Relationships",
+                desc: "A baseline system design has a complex many-to-many relationship tracking Student entities across individual Course blueprints. Identify the core database modeling pattern needed to break down this layout into clean, manageable entities, eliminating duplication flaws.",
+                type: "dropdown",
+                options: ["Superclass Extraction", "Associative / Junction Entity", "Composite Attribute Separation", "Recursive Pointer Loop"],
+                correct: "Associative / Junction Entity",
+                render: (userInput) => {
+                    return `
+                    <svg width="600" height="280" style="background:transparent;">
+                        <foreignObject x="10" y="60" width="160" height="130">
+                            <div class="erd-box"><div class="erd-title">Student</div><div class="erd-fields"><span class="pk-field">PK</span> student_id</div></div>
+                        </foreignObject>
+                        
+                        <foreignObject x="210" y="40" width="180" height="160">
+                            <div class="erd-box" style="border-color:${userInput === 'Associative / Junction Entity' ? 'var(--neon-green)' : 'var(--neon-orange)'};">
+                                <div class="erd-title" style="background:${userInput === 'Associative / Junction Entity' ? 'var(--neon-green)' : 'var(--neon-orange)'}; color:#000;">${userInput === "Associative / Junction Entity" ? "Enrollment" : "UNKNOWN ?"}</div>
+                                <div class="erd-fields">
+                                    <span class="pk-field">PK/FK</span> student_id (INT)<br>
+                                    <span class="pk-field">PK/FK</span> course_id (INT)<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;enrollment_date
+                                </div>
+                            </div>
+                        </foreignObject>
+                        
+                        <line x1="170" y1="120" x2="210" y2="120" stroke="#fff" stroke-width="2"/>
+                        <line x1="390" y1="120" x2="430" y2="120" stroke="#fff" stroke-width="2"/>
+                        
+                        <foreignObject x="430" y="60" width="160" height="130">
+                            <div class="erd-box"><div class="erd-title">Course</div><div class="erd-fields"><span class="pk-field">PK</span> course_id</div></div>
+                        </foreignObject>
+                    </svg>`;
+                }
+            },
+            {
+                title: "Question 9: Dynamic Visibility Field Operators",
+                desc: "Review this securely encapsulated class block blueprint layout. Analyze the structural attributes prefix notation markers and classify the exact meaning of the visibility definition handling the variable labeled balance (- balance: float).",
+                type: "dropdown",
+                options: ["Public Access State", "Protected Derivative State", "Private Isolated State"],
+                correct: "Private Isolated State",
+                render: (userInput) => {
+                    return `
+                    <svg width="600" height="260" style="background:transparent;">
+                        <foreignObject x="190" y="30" width="220" height="190">
+                            <div class="uml-box" style="width:100%; border-color: var(--neon-purple);">
+                                <div class="uml-title">SecureVault</div>
+                                <div class="uml-compartment">
+                                    <span style="color:${userInput === 'Private Isolated State' ? 'var(--neon-green)' : 'var(--neon-orange)'}; font-weight:bold;">- balance: float</span><br>
+                                    + vaultIdentifier: string
+                                </div>
+                                <div class="uml-compartment">
+                                    + extractFunds(amt: float)<br>
+                                    # runAuditVerification()
+                                </div>
+                            </div>
+                        </foreignObject>
+                    </svg>`;
+                }
+            },
+            {
+                title: "Question 10: Multi-tier Schema Composition Analysis",
+                desc: "Evaluate this multi-tier system assembly architecture tracing a computer system's composition hierarchy. If the master Computer processing framework object is completely destroyed in memory, determine the cascading lifestyle status of the sub-tier CPU processing node.",
+                type: "dropdown",
+                options: ["Persists independently in database cache", "Terminates instantly alongside the parent object container", "Migrates upward to structural superclass blocks"],
+                correct: "Terminates instantly alongside the parent object container",
+                render: (userInput) => {
+                    return `
+                    <svg width="600" height="260" style="background:transparent;">
+                        <defs>
+                            <marker id="comp-diamond" markerWidth="20" markerHeight="20" refX="0" refY="10" orient="auto">
+                                <polygon points="0,10 L10,5 L20,10 L10,15 Z" fill="#bd00ff" stroke="#bd00ff"/>
+                            </marker>
+                        </defs>
+                        <foreignObject x="20" y="50" width="200" height="140">
+                            <div class="uml-box" style="border-color: var(--neon-purple)">
+                                <div class="uml-title">Computer</div>
+                                <div class="uml-compartment">- unitSerial: str</div>
+                            </div>
+                        </foreignObject>
+                        
+                        <line x1="380" y1="120" x2="220" y2="120" stroke="#bd00ff" stroke-width="3" marker-start="url(#comp-diamond)"/>
+                        
+                        <foreignObject x="380" y="50" width="200" height="140">
+                            <div class="uml-box">
+                                <div class="uml-title">CPU</div>
+                                <div class="uml-compartment">- coreClockSpeed: float</div>
+                            </div>
+                        </foreignObject>
+                    </svg>`;
+                }
+            }
+        ];
+
+        // State Tracking Machine Tree Configuration 
+        let activeChallengeIdx = 0;
+        let internalExamStateStore = {
+            completedPhases: [],
+            historicalAnswers: {}
+        };
+
+        // DOM Element Catch Registry
+        const selectorsContainer = document.getElementById('selectors-container');
+        const chalTitle = document.getElementById('challenge-title');
+        const chalDesc = document.getElementById('challenge-desc');
+        const canvasView = document.getElementById('canvas-view');
+        const formFieldsContainer = document.getElementById('form-fields-container');
+        const feedbackArena = document.getElementById('feedback-arena');
+        const btnVerify = document.getElementById('btn-verify-answer');
+        const btnReveal = document.getElementById('btn-reveal-solution');
+
+        function initAppModuleEngine() {
+            const cachedData = localStorage.getItem('oop_erd_phase_state');
+            if (cachedData) {
+                try {
+                    internalExamStateStore = JSON.parse(cachedData);
+                } catch(e) {
+                    console.error("Cache corrupted. Resetting state pipeline tracking vectors.", e);
+                }
+            }
+            buildNavigationInterface();
+            loadSelectedChallengeFrame();
+        }
+
+        function syncProgressCache() {
+            localStorage.setItem('oop_erd_phase_state', JSON.stringify(internalExamStateStore));
+            
+            // Sync to global aggregate scorecard framework if alive
+            let globalState = JSON.parse(localStorage.getItem('oop_exam_state'));
+            if(globalState) {
+                const count = internalExamStateStore.completedPhases.length;
+                globalState.scores.erd.score = count;
+                globalState.scores.erd.status = count === 10 ? 'Completed' : 'In Progress';
+                localStorage.setItem('oop_exam_state', JSON.stringify(globalState));
+            }
+        }
+
+        function buildNavigationInterface() {
+            selectorsContainer.innerHTML = '';
+            challengeMatrix.forEach((item, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `challenge-btn ${idx === activeChallengeIdx ? 'active' : ''}`;
+                
+                const isPassed = internalExamStateStore.completedPhases.includes(idx);
+                btn.innerHTML = `
+                    <span>Challenge Matrix ${idx + 1}</span>
+                    <div class="indicator-dot ${isPassed ? 'passed' : ''}"></div>
+                `;
+                
+                btn.addEventListener('click', () => {
+                    activeChallengeIdx = idx;
+                    buildNavigationInterface();
+                    loadSelectedChallengeFrame();
+                });
+                selectorsContainer.appendChild(btn);
+            });
+        }
+
+        function loadSelectedChallengeFrame() {
+            const currentItem = challengeMatrix[activeChallengeIdx];
+            chalTitle.textContent = currentItem.title;
+            chalDesc.textContent = currentItem.desc;
+            feedbackArena.style.display = "none";
+
+            // Pull previously stored answer draft if available
+            const savedDraft = internalExamStateStore.historicalAnswers[activeChallengeIdx] || "";
+            
+            // Generate Input Forms based on challenge variant type
+            formFieldsContainer.innerHTML = '';
+            if (currentItem.type === "dropdown") {
+                const selectGroup = document.createElement('div');
+                selectGroup.className = "input-group";
+                selectGroup.innerHTML = `
+                    <label for="interactive-select">Select Correct Architectural Model Definition:</label>
+                    <select id="interactive-select">
+                        <option value="">-- Awaiting Structural Choice Selection --</option>
+                        ${currentItem.options.map(opt => `<option value="${opt}" ${opt === savedDraft ? 'selected' : ''}>${opt}</option>`).join('')}
+                    </select>
+                `;
+                formFieldsContainer.appendChild(selectGroup);
+                
+                const selectElement = document.getElementById('interactive-select');
+                selectElement.addEventListener('change', (e) => {
+                    canvasView.innerHTML = currentItem.render(e.target.value);
+                    internalExamStateStore.historicalAnswers[activeChallengeIdx] = e.target.value;
+                    syncProgressCache();
+                });
+            } else if (currentItem.type === "text") {
+                const textGroup = document.createElement('div');
+                textGroup.className = "input-group";
+                textGroup.innerHTML = `
+                    <label for="interactive-text">Specify Correct Field Metric/Attribute Token:</label>
+                    <input type="text" id="interactive-text" placeholder="${currentItem.placeholder}" value="${savedDraft}">
+                `;
+                formFieldsContainer.appendChild(textGroup);
+
+                const textElement = document.getElementById('interactive-text');
+                textElement.addEventListener('input', (e) => {
+                    canvasView.innerHTML = currentItem.render(e.target.value.trim());
+                    internalExamStateStore.historicalAnswers[activeChallengeIdx] = e.target.value.trim();
+                    syncProgressCache();
+                });
+            }
+
+            // Fire rendering pipeline with active parameters on baseline allocation load
+            const activeInput = internalExamStateStore.historicalAnswers[activeChallengeIdx] || "";
+            canvasView.innerHTML = currentItem.render(activeInput);
+        }
+
+        // Verification validation loops
+        btnVerify.addEventListener('click', () => {
+            const targetItem = challengeMatrix[activeChallengeIdx];
+            const currentAnswer = internalExamStateStore.historicalAnswers[activeChallengeIdx] || "";
+
+            if (!currentAnswer) {
+                feedbackArena.className = "feedback-box feedback-error";
+                feedbackArena.textContent = "Validation Rejected: Form requires user input before evaluating system architecture alignment patterns.";
+                feedbackArena.style.display = "block";
+                return;
+            }
+
+            if (currentAnswer.toLowerCase() === targetItem.correct.toLowerCase()) {
+                feedbackArena.className = "feedback-box feedback-success";
+                feedbackArena.textContent = "Architectural Alignment Confirmed! Verification matrix matches reference schema definitions perfectly.";
+                feedbackArena.style.display = "block";
+
+                if (!internalExamStateStore.completedPhases.includes(activeChallengeIdx)) {
+                    internalExamStateStore.completedPhases.push(activeChallengeIdx);
+                }
+                syncProgressCache();
+                buildNavigationInterface();
+            } else {
+                feedbackArena.className = "feedback-box feedback-error";
+                feedbackArena.textContent = "Structural Verification Failed: Specified option breaks structural relationships or violates cardinal rule mappings.";
+                feedbackArena.style.display = "block";
+            }
+        });
+
+        // Solution Revelation mechanism
+        btnReveal.addEventListener('click', () => {
+            const targetItem = challengeMatrix[activeChallengeIdx];
+            feedbackArena.className = "feedback-box";
+            feedbackArena.style.backgroundColor = "rgba(189, 0, 255, 0.1)";
+            feedbackArena.style.border = "1px solid var(--neon-purple)";
+            feedbackArena.style.color = "#e879f9";
+            feedbackArena.textContent = `Reference Exam Solution Target: [ ${targetItem.correct} ]`;
+            feedbackArena.style.display = "block";
+        });
+
+        // Global progress reset configuration call link
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            if(confirm('Are you certain you want to purge architectural layout verification histories?')) {
+                localStorage.removeItem('oop_erd_phase_state');
+                internalExamStateStore = { completedPhases: [], historicalAnswers: {} };
+                syncProgressCache();
+                activeChallengeIdx = 0;
+                buildNavigationInterface();
+                loadSelectedChallengeFrame();
+            }
+        });
+
+        // Fire initialization routines
+        initAppModuleEngine();
+    </script>
+</body>
+</html>

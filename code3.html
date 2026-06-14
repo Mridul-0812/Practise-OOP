@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 5: Masterclass Practical OOP Code Arena</title>
+    <style>
+        :root {
+            --bg-primary: #0a0b10;
+            --bg-secondary: #12131a;
+            --bg-card: rgba(24, 26, 38, 0.6);
+            --neon-blue: #00f0ff;
+            --neon-green: #39ff14;
+            --neon-purple: #bd00ff;
+            --text-main: #e2e8f0;
+            --text-muted: #8a99ad;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            margin: 0;
+            padding: 24px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--neon-blue);
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 32px;
+        }
+
+        @media (max-width: 1024px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Navigation Sidebar */
+        .sidebar {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            max-height: calc(100vh - 160px);
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            margin-top: 0;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-item:hover {
+            background: rgba(0, 240, 255, 0.05);
+            border-color: rgba(0, 240, 255, 0.2);
+        }
+
+        .nav-item.active {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: var(--neon-blue);
+            color: var(--neon-blue);
+            font-weight: 600;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #2d3748;
+            color: #a0aec0;
+        }
+
+        .status-badge.completed {
+            background: rgba(57, 255, 20, 0.15);
+            color: var(--neon-green);
+        }
+
+        /* Workspace Panels */
+        .workspace {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .problem-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 28px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(8px);
+        }
+
+        .problem-tag {
+            color: var(--neon-purple);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .problem-title {
+            font-size: 1.6rem;
+            margin: 0 0 16px 0;
+            color: #fff;
+        }
+
+        .problem-description {
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+
+        .spec-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 4px solid var(--neon-purple);
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+        }
+
+        .spec-box h4 {
+            margin: 0 0 8px 0;
+            color: #fff;
+        }
+
+        .spec-box ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #94a3b8;
+        }
+
+        /* Twin Code Layout */
+        .code-arena {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .code-arena {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        textarea {
+            width: 100%;
+            height: 480px;
+            background: #07080d;
+            color: #a7f3d0;
+            font-family: 'Fira Code', Consolas, Monaco, monospace;
+            font-size: 14px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            resize: none;
+            box-sizing: border-box;
+            line-height: 1.5;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.1);
+        }
+
+        .solution-box {
+            width: 100%;
+            height: 480px;
+            background: #0b0f19;
+            color: #93c5fd;
+            font-family: 'Fira Code', Consolas, Monaco, monospace;
+            font-size: 14px;
+            padding: 16px;
+            border: 1px solid rgba(189, 0, 255, 0.3);
+            border-radius: 12px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            white-space: pre;
+            line-height: 1.5;
+            display: none;
+        }
+
+        /* Control Tray */
+        .control-tray {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-secondary);
+            padding: 16px 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: var(--neon-blue);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-main);
+            border-color: var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--text-muted);
+        }
+
+        .btn-accent {
+            background: rgba(189, 0, 255, 0.2);
+            color: #e879f9;
+            border-color: rgba(189, 0, 255, 0.4);
+        }
+
+        .btn-accent:hover {
+            background: rgba(189, 0, 255, 0.3);
+            box-shadow: 0 0 15px rgba(189, 0, 255, 0.3);
+        }
+
+        .metrics-summary {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .metrics-summary span {
+            color: var(--neon-blue);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Phase 5: Advanced Practical Design Arena</h1>
+        <div class="subtitle">10 High-Tier Exam Challenges Covering Encapsulation, State Mutation Validation, and Poly-Morphic Constructs</div>
+    </header>
+
+    <div class="layout-grid">
+        <aside class="sidebar">
+            <h3>Exam Challenges</h3>
+            <ul class="nav-list" id="challenge-nav">
+                </ul>
+        </aside>
+
+        <main class="workspace">
+            <div class="problem-card" id="problem-card">
+                <span class="problem-tag" id="prob-tag">Challenge 1</span>
+                <h2 class="problem-title" id="prob-title">Loading Challenge Definition...</h2>
+                <p class="problem-description" id="prob-desc">...</p>
+                
+                <div class="spec-box">
+                    <h4>Architectural Directives:</h4>
+                    <ul id="prob-specs">
+                        </ul>
+                </div>
+
+                <div class="code-arena">
+                    <div>
+                        <div class="panel-header">
+                            <span>Your Implementation (Python Syntax)</span>
+                            <span style="color: var(--neon-blue);">Editable Blueprint Workspace</span>
+                        </div>
+                        <textarea id="user-code" placeholder="# Write your 20-25 line validated OOP class structure here..."></textarea>
+                    </div>
+                    <div>
+                        <div class="panel-header">
+                            <span>Reference Examination Schema</span>
+                            <span style="color: var(--neon-purple);" id="solution-status">Hidden</span>
+                        </div>
+                        <div class="solution-box" id="solution-view"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-tray">
+                <div class="metrics-summary">
+                    Progress Matrix: <span id="completed-count">0</span> / 10 Mastered
+                </div>
+                <div class="btn-group">
+                    <button class="btn-secondary" id="btn-prev">Previous Challenge</button>
+                    <button class="btn-accent" id="btn-reveal">Reveal Reference Schema</button>
+                    <button class="btn-primary" id="btn-submit">Commit & Mark Complete</button>
+                    <button class="btn-secondary" id="btn-next">Next Challenge</button>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    // 10 Rigorous, Exam-Style Challenges (Each exactly 20-25 lines long with getters, setters, logic, and constructors)
+    const dynamicExamChallenges = [
+        {
+            tag: "Challenge 01 // Secure Banking Core",
+            title: "Encapsulated Vault Account Manager",
+            desc: "Design a BankAccount class protecting internal funds using private instance properties. Enforce type checks and logical validation within mutation gates to simulate strict architectural data safety bounds.",
+            specs: [
+                "Initialize with private attributes __account_holder and __balance.",
+                "Implement a getter property for the balance value.",
+                "Create a setter for balance that blocks invalid mutations (negative changes).",
+                "Construct a deposit() method validating that updates exceed zero.",
+                "Construct a withdraw() method handling conditional checks to block overdraft limits."
+            ],
+            starter: "class BankAccount:\n    def __init__(self, holder, initial_deposit):\n        # Instantiate your private storage gates here\n        pass\n",
+            solution: `class BankAccount:
+    def __init__(self, holder, initial_deposit):
+        self.__account_holder = holder
+        self.__balance = initial_deposit if initial_deposit >= 0 else 0
+
+    @property
+    def balance(self):
+        return self.__balance
+
+    @balance.setter
+    def balance(self, amount):
+        if amount >= 0:
+            self.__balance = amount
+        else:
+            print("Error: Negative structural state allocation blocked.")
+
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
+            return True
+        return False
+
+    def withdraw(self, amount):
+        if 0 < amount <= self.__balance:
+            self.__balance -= amount
+            return True
+        else:
+            print("Transaction Rejected: Insufficient balance pool.")
+            return False`
+        },
+        {
+            tag: "Challenge 02 // Autonomous Transit Systems",
+            title: "Smart Electric Vehicle Throttle Vectoring",
+            desc: "Construct an automated vehicle state manager monitoring power consumption thresholds. The architecture must enforce strict safety rules via property decorators to prevent over-speed parameters.",
+            specs: [
+                "Define a private __speed property initialized inside the object constructor.",
+                "Expose speed safely using property decorators (@property).",
+                "Validate values inside the speed setter: block inputs below 0 or above 160.",
+                "Implement an accelerate() function to scale speed values by structural offsets dynamically.",
+                "Embed conditional safety logic that flags an automated warning if speed exceeds 110."
+            ],
+            starter: "class ElectricVehicle:\n    def __init__(self, model):\n        self.model = model\n        # Initialize private acceleration bounds\n",
+            solution: `class ElectricVehicle:
+    def __init__(self, model):
+        self.model = model
+        self.__speed = 0
+
+    @property
+    def speed(self):
+        return self.__speed
+
+    @speed.setter
+    def speed(self, target_speed):
+        if 0 <= target_speed <= 160:
+            self.__speed = target_speed
+        else:
+            print("Safety Override: Target speed breaks threshold parameters.")
+
+    def accelerate(self, increment):
+        if increment > 0:
+            self.speed = self.__speed + increment
+        if self.__speed > 110:
+            print("Warning: Autonomous deceleration safety flags active.")
+
+    def emergency_brake(self):
+        self.__speed = 0`
+        },
+        {
+            tag: "Challenge 03 // E-Commerce Transaction Pipeline",
+            title: "Premium Subscription Cart Validator",
+            desc: "Build an asset processing system utilizing data validation inside private state tracking fields. This class models enterprise order fulfillment engines tracking system state.",
+            specs: [
+                "Establish a class tracking private attributes __subtotal and __discount_rate.",
+                "Enforce logic within the discount setter to lock values exclusively between 0.0 and 0.50.",
+                "Construct a calculate_total() method compiling processing fees with compound values.",
+                "Incorporate an explicit branching structure checking if the subtotal qualifies for free distribution channels.",
+                "Reject items added with value structures less than or equal to zero."
+            ],
+            starter: "class OrderPipeline:\n    def __init__(self, client_id):\n        self.client_id = client_id\n",
+            solution: `class OrderPipeline:
+    def __init__(self, client_id):
+        self.client_id = client_id
+        self.__subtotal = 0.0
+        self.__discount_rate = 0.0
+
+    @property
+    def discount_rate(self):
+        return self.__discount_rate
+
+    @discount_rate.setter
+    def discount_rate(self, value):
+        self.__discount_rate = value if 0.0 <= value <= 0.50 else 0.0
+
+    def add_item(self, price):
+        if price > 0:
+            self.__subtotal += price
+        else:
+            print("Invalid Matrix: Item valuation must be positive.")
+
+    def calculate_total(self):
+        discounted = self.__subtotal * (1 - self.__discount_rate)
+        if discounted >= 100.0:
+            return discounted  # Free distribution threshold active
+        return discounted + 15.00  # Compile standard shipping surcharge`
+        },
+        {
+            tag: "Challenge 04 // Simulation Engine Grid",
+            title: "Combat Particle Target Tracking System",
+            desc: "Develop a structural subsystem tracking target health indices. Use property mutations containing strict death validation constraints to isolate health manipulation pipelines.",
+            specs: [
+                "Encapsulate vital states natively behind a private __health variable.",
+                "Build read/write properties enforcing capping ceilings at 100 total points.",
+                "Prevent setting values less than 0 by resetting lower bounds automatically to exactly 0.",
+                "Expose an active boolean property checking if state metrics evaluate to dead (health == 0).",
+                "Construct an active apply_damage() module reducing health state elements safely."
+            ],
+            starter: "class SimulationTarget:\n    def __init__(self, system_id):\n        # Construct robust vital state parameters\n",
+            solution: `class SimulationTarget:
+    def __init__(self, system_id):
+        self.system_id = system_id
+        self.__health = 100
+
+    @property
+    def health(self):
+        return self.__health
+
+    @health.setter
+    def health(self, value):
+        if value > 100:
+            self.__health = 100
+        elif value < 0:
+            self.__health = 0
+        else:
+            self.__health = value
+
+    @property
+    def is_destroyed(self):
+        return self.__health == 0
+
+    def apply_damage(self, charge):
+        if charge > 0:
+            self.health = self.__health - charge
+            if self.is_destroyed:
+                print(f"System Alert: Target {self.system_id} marked dead.")`
+        },
+        {
+            tag: "Challenge 05 // Network Resource Architecture",
+            title: "Throttled Data Transport Streamer",
+            desc: "Design a programmatic channel balancing bandwidth allocations across network endpoints, preventing saturation crashes via validation mechanics.",
+            specs: [
+                "Store private values for __max_bandwidth and __active_load.",
+                "Inject verification conditions into the active load property to deny queries surpassing limits.",
+                "Expose an operational compute method calculating current availability headroom.",
+                "Build a request_channel_allocation() routine running dynamic if/else verification steps.",
+                "Verify input packet stream parameters to prevent registration of corrupted zero states."
+            ],
+            starter: "class NetworkStreamer:\n    def __init__(self, node_ip, max_limit):\n        # Handle network boundary limits safely\n",
+            solution: `class NetworkStreamer:
+    def __init__(self, node_ip, max_limit):
+        self.node_ip = node_ip
+        self.__max_bandwidth = max_limit
+        self.__active_load = 0
+
+    @property
+    def active_load(self):
+        return self.__active_load
+
+    @active_load.setter
+    def active_load(self, load):
+        if 0 <= load <= self.__max_bandwidth:
+            self.__active_load = load
+        else:
+            print("Network Failure: Request exceeds maximum line thresholds.")
+
+    def get_available_headroom(self):
+        return self.__max_bandwidth - self.__active_load
+
+    def allocate_channel(self, stream_size):
+        if stream_size > 0 and self.get_available_headroom() >= stream_size:
+            self.active_load += stream_size
+            return True
+        return False`
+        },
+        {
+            tag: "Challenge 06 // Specialized HR Structures",
+            title: "Corporate Payroll Mutation Matrix",
+            desc: "Create an employee hierarchy object validating monetary allocations via property control loops. This structure tests inheritance, method overriding, and super() integration patterns.",
+            specs: [
+                "Establish base parameters using a private __base_salary tracking property.",
+                "Construct property verification code rejecting monthly salaries below a minimum index ($2500).",
+                "Expose a public method processing monthly payment metrics.",
+                "Construct a Manager subclass overriding the core pay calculation algorithm.",
+                "Call the base super structure from within the child constructor context gracefully."
+            ],
+            starter: "class Employee:\n    def __init__(self, name, salary):\n        # Setup verified payroll configurations\n",
+            solution: `class Employee:
+    def __init__(self, name, salary):
+        self.name = name
+        self.__base_salary = 2500
+        self.base_salary = salary  # Trigger validation logic directly
+
+    @property
+    def base_salary(self):
+        return self.__base_salary
+
+    @base_salary.setter
+    def base_salary(self, amount):
+        if amount >= 2500:
+            self.__base_salary = amount
+        else:
+            self.__base_salary = 2500
+
+    def calculate_payout(self):
+        return self.__base_salary
+
+class Manager(Employee):
+    def __init__(self, name, salary, performance_bonus):
+        super().__init__(name, salary)
+        self.performance_bonus = performance_bonus if performance_bonus > 0 else 0
+
+    def calculate_payout(self):
+        return self.base_salary + self.performance_bonus`
+        },
+        {
+            tag: "Challenge 07 // Inventory Auditing Systems",
+            title: "Perishable Warehouse Depot Management",
+            desc: "Examine programmatic asset tracking inside a secure inventory class. Enforce data mutation criteria across active quantities using structural tracking parameters.",
+            specs: [
+                "Instantiate an object wrapping a private tracking counter named __quantity.",
+                "Expose standard read/write interfaces utilizing clean property tags.",
+                "Write defensive error catching steps that block stock deductions from falling below zero.",
+                "Build a safe, checked restock method tracking incoming batch items securely.",
+                "Deploy conditional logic processing priority tags if counts fall below minimum restock thresholds."
+            ],
+            starter: "class WarehouseStock:\n    def __init__(self, SKU, critical_limit):\n        # Initialize product tracking state securely\n",
+            solution: `class WarehouseStock:
+    def __init__(self, SKU, critical_limit):
+        self.SKU = SKU
+        self.critical_limit = critical_limit
+        self.__quantity = 0
+
+    @property
+    def quantity(self):
+        return self.__quantity
+
+    @img_quantity_setter
+    @quantity.setter
+    def quantity(self, value):
+        if value >= 0:
+            self.__quantity = value
+        else:
+            print("Inventory Violation: System cannot register negative physical stock.")
+
+    def process_restock(self, batch_count):
+        if batch_count > 0:
+            self.quantity = self.__quantity + batch_count
+
+    def process_dispatch(self, request_count):
+        if request_count > 0 and self.__quantity >= request_count:
+            self.quantity = self.__quantity - request_count
+        if self.__quantity <= self.critical_limit:
+            print(f"Procurement Alert: SKU {self.SKU} requires prioritized restocking.")`
+        },
+        {
+            tag: "Challenge 08 // Academic Grade Processing",
+            title: "Validated Marksheet Tracking Object",
+            desc: "Develop an educational data manager mapping assignment scores inside private lists. Enforce range checking algorithms across all mathematical mutation routes.",
+            specs: [
+                "Protect internal scores using private arrays (__scores).",
+                "Create a secure getter that prevents external code from altering items directly.",
+                "Embed conditional structures validating that added scores sit between 0 and 100 exclusively.",
+                "Implement a compute_gpa() calculation loop compiling standard point averages.",
+                "Isolate edge cases by returning a zero value if the score container array resolves to empty."
+            ],
+            starter: "class AcademicMarksheet:\n    def __init__(self, student_id):\n        # Construct isolated mark structures\n",
+            solution: `class AcademicMarksheet:
+    def __init__(self, student_id):
+        self.student_id = student_id
+        self.__scores = []
+
+    @property
+    def record_sheet(self):
+        return list(self.__scores)  # Return defensive copy to isolate state data
+
+    def register_score(self, mark):
+        if 0 <= mark <= 100:
+            self.__scores.append(mark)
+            return True
+        return False
+
+    def compute_average(self):
+        if not self.__scores:
+            return 0.0
+        total_points = sum(self.__scores)
+        computed_avg = total_points / len(self.__scores)
+        return computed_avg`
+        },
+        {
+            tag: "Challenge 09 // Thermal Powerplant Automation",
+            title: "Cryogenic Temperature Boundary Interface",
+            desc: "Model a critical telemetry system tracking physical system metrics. Ensure invalid readings are systematically rejected using structural validation thresholds to protect equipment integrity.",
+            specs: [
+                "Establish a tracking system managing private properties called __celsius.",
+                "Bind property configurations preventing modifications below absolute zero (-273.15).",
+                "Construct an alternative public utility exposing values translated instantly to Fahrenheit scales.",
+                "Expose matching setter capabilities for the alternative temperature interface.",
+                "Integrate safety triggers within core state changes if metrics register past boiling points."
+            ],
+            starter: "class CoreThermalSensor:\n    def __init__(self, sector_id):\n        # Map physical core sensors with strict validation thresholds\n",
+            solution: `class CoreThermalSensor:
+    def __init__(self, sector_id):
+        self.sector_id = sector_id
+        self.__celsius = 20.0
+
+    @property
+    def celsius(self):
+        return self.__celsius
+
+    @celsius.setter
+    def celsius(self, reading):
+        if reading >= -273.15:
+            self.__celsius = reading
+            if reading > 100.0:
+                print("Critical Event: High temperature containment sequence active.")
+        else:
+            print("Physical Error: State allocation below absolute zero is impossible.")
+
+    @property
+    def fahrenheit(self):
+        return (self.__celsius * 9/5) + 32
+
+    @fahrenheit.setter
+    def fahrenheit(self, value):
+        converted_c = (value - 32) * 5/9
+        self.celsius = converted_c`
+        },
+        {
+            tag: "Challenge 10 // Smart Home Power Routing",
+            title: "Validated Microgrid Load Distributer",
+            desc: "Build a modular electrical load tracking model using strict encapsulation structures. Validate live wattage limits through custom property management rules.",
+            specs: [
+                "Initialize with private attributes __connected_wattage and __fuse_rating.",
+                "Prevent direct changes by enforcing private mutations inside property scopes.",
+                "Implement logic blocking adjustments that exceed maximum structural fuse indices.",
+                "Write a connect_appliance() algorithm validating that input parameters represent positive numbers.",
+                "Build logic parsing conditional warning flags if current consumption loads exceed 85% of capacity."
+            ],
+            starter: "class SmartMicrogrid:\n    def __init__(self, sector_code, fuse_max):\n        # Form clean microgrid safety parameters\n",
+            solution: `class SmartMicrogrid:
+    def __init__(self, sector_code, fuse_max):
+        self.sector_code = sector_code
+        self.__fuse_rating = fuse_max if fuse_max > 0 else 2400
+        self.__connected_wattage = 0
+
+    @property
+    def current_draw(self):
+        return self.__connected_wattage
+
+    def connect_appliance(self, appliance_watts):
+        if appliance_watts > 0:
+            prospective_load = self.__connected_wattage + appliance_watts
+            if prospective_load <= self.__fuse_rating:
+                self.__connected_wattage = prospective_load
+                if self.__connected_wattage >= (self.__fuse_rating * 0.85):
+                    print("Load Warning: Microgrid consumption nears critical limit.")
+                return True
+            else:
+                print("Overload Tripped: Transaction rejected to preserve fuse state.")
+        return False
+
+    def disconnect_all(self):
+        self.__connected_wattage = 0`
+        }
+    ];
+
+    // Persistence State Layer
+    let activeChallengeIdx = 0;
+    let persistentExamState = {
+        completedChallenges: [],
+        userScripts: {}
+    };
+
+    // DOM Nodes
+    const navList = document.getElementById('challenge-nav');
+    const probTag = document.getElementById('prob-tag');
+    const probTitle = document.getElementById('prob-title');
+    const probDesc = document.getElementById('prob-desc');
+    const probSpecs = document.getElementById('prob-specs');
+    const userCode = document.getElementById('user-code');
+    const solutionView = document.getElementById('solution-view');
+    const solutionStatus = document.getElementById('solution-status');
+    const completedCount = document.getElementById('completed-count');
+
+    // Control Elements
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const btnReveal = document.getElementById('btn-reveal');
+    const btnSubmit = document.getElementById('btn-submit');
+
+    // System Initialization
+    function initSystemStateStore() {
+        const cachedData = localStorage.getItem('phase5_exam_state');
+        if (cachedData) {
+            try {
+                persistentExamState = JSON.parse(cachedData);
+            } catch (e) {
+                console.error("Cache parsing corrupted. Reinitializing state tree.", e);
+            }
+        }
+        renderSidebarNavigation();
+        updateProgressMatrix();
+    }
+
+    function syncStateWithStorage() {
+        localStorage.setItem('phase5_exam_state', JSON.stringify(persistentExamState));
+        updateProgressMatrix();
+    }
+
+    function renderSidebarNavigation() {
+        navList.innerHTML = '';
+        dynamicExamChallenges.forEach((challenge, idx) => {
+            const li = document.createElement('li');
+            li.className = `nav-item ${idx === activeChallengeIdx ? 'active' : ''}`;
+            
+            const isDone = persistentExamState.completedChallenges.includes(idx);
+            li.innerHTML = `
+                <span>Challenge ${idx + 1}</span>
+                <span class="status-badge ${isDone ? 'completed' : ''}">${isDone ? 'Mastered' : 'Pending'}</span>
+            `;
+            
+            li.addEventListener('click', () => {
+                saveCurrentDraftText();
+                activeChallengeIdx = idx;
+                loadTargetChallengeFrame();
+                renderSidebarNavigation();
+            });
+            navList.appendChild(li);
+        });
+    }
+
+    function updateProgressMatrix() {
+        completedCount.textContent = persistentExamState.completedChallenges.length;
+    }
+
+    function saveCurrentDraftText() {
+        persistentExamState.userScripts[activeChallengeIdx] = userCode.value;
+        localStorage.setItem('phase5_exam_state', JSON.stringify(persistentExamState));
+    }
+
+    function loadTargetChallengeFrame() {
+        const currentChallenge = dynamicExamChallenges[activeChallengeIdx];
+        
+        // Render Meta Content
+        probTag.textContent = currentChallenge.tag;
+        probTitle.textContent = currentChallenge.title;
+        probDesc.textContent = currentChallenge.desc;
+        
+        // Render Directives Bullet Points
+        probSpecs.innerHTML = '';
+        currentChallenge.specs.forEach(spec => {
+            const li = document.createElement('li');
+            li.textContent = spec;
+            probSpecs.appendChild(li);
+        });
+
+        // Load Saved Code or Default Starter Blueprint Template
+        if (persistentExamState.userScripts[activeChallengeIdx] !== undefined) {
+            userCode.value = persistentExamState.userScripts[activeChallengeIdx];
+        } else {
+            userCode.value = currentChallenge.starter;
+        }
+
+        // Hide Reference Panel until Requested explicitly
+        solutionView.style.display = 'none';
+        solutionView.textContent = '';
+        solutionStatus.textContent = "Hidden";
+        solutionStatus.style.color = "var(--neon-purple)";
+        btnReveal.textContent = "Reveal Reference Schema";
+
+        // Handle Active Button Configurations
+        btnPrev.disabled = (activeChallengeIdx === 0);
+        btnNext.disabled = (activeChallengeIdx === dynamicExamChallenges.length - 1);
+    }
+
+    // Wiring Control Event Listeners
+    btnReveal.addEventListener('click', () => {
+        const currentChallenge = dynamicExamChallenges[activeChallengeIdx];
+        if (solutionView.style.display === 'none') {
+            solutionView.textContent = currentChallenge.solution;
+            solutionView.style.display = 'block';
+            solutionStatus.textContent = "ACTIVE VIEW";
+            solutionStatus.style.color = "var(--neon-green)";
+            btnReveal.textContent = "Hide Reference Schema";
+        } else {
+            solutionView.style.display = 'none';
+            solutionView.textContent = '';
+            solutionStatus.textContent = "Hidden";
+            solutionStatus.style.color = "var(--neon-purple)";
+            btnReveal.textContent = "Reveal Reference Schema";
+        }
+    });
+
+    btnSubmit.addEventListener('click', () => {
+        if (!persistentExamState.completedChallenges.includes(activeChallengeIdx)) {
+            persistentExamState.completedChallenges.push(activeChallengeIdx);
+        }
+        saveCurrentDraftText();
+        syncStateWithStorage();
+        renderSidebarNavigation();
+        alert(`Challenge ${activeChallengeIdx + 1} marked complete. Progress securely tracked!`);
+    });
+
+    btnPrev.addEventListener('click', () => {
+        if (activeChallengeIdx > 0) {
+            saveCurrentDraftText();
+            activeChallengeIdx--;
+            loadTargetChallengeFrame();
+            renderSidebarNavigation();
+        }
+    });
+
+    btnNext.addEventListener('click', () => {
+        if (activeChallengeIdx < dynamicExamChallenges.length - 1) {
+            saveCurrentDraftText();
+            activeChallengeIdx++;
+            loadTargetChallengeFrame();
+            renderSidebarNavigation();
+        }
+    });
+
+    // Run Engine
+    initSystemStateStore();
+    loadTargetChallengeFrame();
+</script>
+
+</body>
+</html>

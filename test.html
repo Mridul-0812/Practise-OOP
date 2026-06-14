@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 6: Testing Methodology Matrices - SWE Engine</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0a0b10;
+            --panel-bg: rgba(18, 20, 32, 0.7);
+            --border-glow: rgba(0, 240, 255, 0.25);
+            --text-neon: #00f0ff;
+            --text-muted: #8fa0dd;
+            --accent-green: #00ffaa;
+            --accent-red: #ff3b30;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+        }
+
+        /* Fixed Sidebar Alignment matching index.html */
+        .sidebar {
+            width: 260px;
+            background: rgba(13, 14, 24, 0.95);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 100;
+        }
+        .sidebar-brand {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #fff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glowing-icon {
+            color: var(--text-neon);
+            text-shadow: 0 0 10px var(--text-neon);
+        }
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            flex-grow: 1;
+        }
+        .nav-links li {
+            padding: 4px 16px;
+        }
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav-links li.active a, .nav-links a:hover {
+            color: #fff;
+            background: rgba(0, 240, 255, 0.1);
+            border-left: 4px solid var(--text-neon);
+        }
+        .sidebar-footer {
+            padding: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .btn-secondary {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Dashboard Container Adjustments */
+        .dashboard-container {
+            margin-left: 260px;
+            padding: 40px;
+            width: calc(100% - 260px);
+            box-sizing: border-box;
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glowing-border {
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+        }
+
+        .header-panel h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 30%, var(--text-neon));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Scenario & Code Styles */
+        .challenge-container {
+            margin-top: 40px;
+        }
+        .challenge-title {
+            font-size: 1.5rem;
+            color: var(--text-neon);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            padding-bottom: 8px;
+        }
+        .scenario-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 4px solid var(--text-neon);
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        pre {
+            background: #05060a;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        code {
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+        }
+
+        /* Interactive Matrix Tables */
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            background: rgba(10, 11, 16, 0.6);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .matrix-table th {
+            background: rgba(0, 240, 255, 0.08);
+            color: var(--text-neon);
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(0, 240, 255, 0.2);
+        }
+        .matrix-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.95rem;
+            vertical-align: middle;
+        }
+        .matrix-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Input Elements Inside Tables */
+        .cell-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        .cell-input:focus {
+            outline: none;
+            border-color: var(--text-neon);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+        }
+        .cell-dropdown {
+            width: 100%;
+            background: #121420;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .cell-dropdown:focus {
+            outline: none;
+            border-color: var(--text-neon);
+        }
+
+        /* Solution and Control Buttons */
+        .action-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+        .btn-action {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 240, 255, 0.05));
+            border: 1px solid var(--text-neon);
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-action:hover {
+            background: var(--text-neon);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+        .btn-validate {
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg, rgba(0, 255, 170, 0.2), rgba(0, 255, 170, 0.05));
+        }
+        .btn-validate:hover {
+            background: var(--accent-green);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px rgba(0, 255, 170, 0.4);
+        }
+
+        /* Hidden Solution Container */
+        .solution-panel {
+            display: none;
+            background: rgba(5, 30, 25, 0.6);
+            border: 1px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 15px;
+            animation: fadeIn 0.4s ease forwards;
+        }
+        .solution-panel h4 {
+            margin: 0 0 12px 0;
+            color: var(--accent-green);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .solution-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #081210;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .solution-table th {
+            background: rgba(0, 255, 170, 0.1);
+            color: var(--accent-green);
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 255, 170, 0.3);
+        }
+        .solution-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+            color: #e0f2fe;
+        }
+
+        .feedback-lbl {
+            font-weight: bold;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        .feedback-pass { color: var(--accent-green); }
+        .feedback-fail { color: #ff9500; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .extension-link-wrapper {
+            margin-top: 48px;
+            text-align: center;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            padding-top: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-code-branch glowing-icon"></i>
+            <span>SWE Engine</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+            <li><a href="definitions.html"><i class="fa-solid fa-book"></i> 1. Definitions</a></li>
+            <li><a href="mcq.html"><i class="fa-solid fa-list-check"></i> 2. MCQs</a></li>
+            <li><a href="saq.html"><i class="fa-solid fa-pen-to-square"></i> 3. Short Answer</a></li>
+            <li><a href="code.html"><i class="fa-solid fa-terminal"></i> 4. Code Practical</a></li>
+            <li><a href="erd.html"><i class="fa-solid fa-diagram-project"></i> 5. Class & ERDs</a></li>
+            <li class="active"><a href="test.html"><i class="fa-solid fa-vial"></i> 6. Testing Matrices</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <button id="reset-btn" class="btn-secondary"><i class="fa-solid fa-rotate-right"></i> Reset Progress</button>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        
+        <header class="glass-panel glowing-border header-panel">
+            <h1>Phase 6: Testing Methodology Matrices Verification Arena</h1>
+            <p>Implement comprehensive test cases based on verification models. This system validates input parameter metrics across Black Box (Equivalence Partitioning & Boundary Values), White Box (Basis Path Execution), and Grey Box (System State & Structural Transitions) profiles.</p>
+        </header>
+
+        <div id="testing-matrix-challenges" class="challenge-container">
+            
+            <div class="glass-panel" id="ch-1">
+                <div class="challenge-title">
+                    <span class="badge">Example 1</span>
+                    <span>Black Box Testing: ATM Withdrawal Constraints</span>
+                </div>
+                <div class="scenario-box">
+                    <strong>Functional Requirement Scenario:</strong> An ATM cash dispenser allows accounts to withdraw multiples of $20. Minimum allowable withdrawal structural limitation per single transaction is $20. Maximum allowable structural ceiling limit per single invocation execution is $500.
+                </div>
+                
+                <table class="matrix-table" id="table-1">
+                    <thead>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <th>Test Scenario</th>
+                            <th>Test Data (Amount)</th>
+                            <th>Equivalence Partition Profile</th>
+                            <th>Expected Results</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-ATM-01</td>
+                            <td>Below absolute base minimum limits</td>
+                            <td>$10</td>
+                            <td>Invalid Negative Partition</td>
+                            <td><input type="text" class="cell-input" placeholder="Complete result text" data-ans="Reject / Error Message"></td>
+                        </tr>
+                        <tr>
+                            <td>TC-ATM-02</td>
+                            <td>Exact base boundary value minimum limit</td>
+                            <td><input type="text" class="cell-input" placeholder="Value" data-ans="20"></td>
+                            <td>Valid Minimal Partition Bound</td>
+                            <td>Dispense Cash successfully</td>
+                        </tr>
+                        <tr>
+                            <td>TC-ATM-03</td>
+                            <td>Non-multiple increment validation check</td>
+                            <td>$75</td>
+                            <td><select class="cell-dropdown" data-ans="Invalid Modulo Partition"><option value="">--Select Partition--</option><option value="Valid Partition">Valid Partition</option><option value="Invalid Modulo Partition">Invalid Modulo Partition</option></select></td>
+                            <td>Reject / Invalid Multiples Error</td>
+                        </tr>
+                        <tr>
+                            <td>TC-ATM-04</td>
+                            <td>Exceeds absolute upper maximum ceiling bounds</td>
+                            <td>$520</td>
+                            <td>Invalid Upper Bound Partition</td>
+                            <td><input type="text" class="cell-input" placeholder="Complete result text" data-ans="Reject / Limit Exceeded"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="action-container">
+                    <button class="btn-action btn-validate" onclick="verifyMatrix(1)"><i class="fa-solid fa-square-check"></i> Mark Answers</button>
+                    <button class="btn-action" onclick="toggleSolution(1)"><i class="fa-solid fa-eye"></i> Reveal Master Matrix</button>
+                </div>
+
+                <div class="solution-panel" id="sol-1">
+                    <h4><i class="fa-solid fa-circle-check"></i> Verified Production Solution Map</h4>
+                    <table class="solution-table">
+                        <thead><tr><th>ID</th><th>Scenario</th><th>Data</th><th>Partition Profile</th><th>Expected Results</th></tr></thead>
+                        <tbody>
+                            <tr><td>TC-ATM-01</td><td>Below absolute base minimum limits</td><td>$10</td><td>Invalid Negative Partition</td><td>Reject / Error Message (Non-multiple or minimal check)</td></tr>
+                            <tr><td>TC-ATM-02</td><td>Exact base boundary value minimum limit</td><td>$20</td><td>Valid Minimal Partition Bound</td><td>Dispense Cash successfully</td></tr>
+                            <tr><td>TC-ATM-03</td><td>Non-multiple increment validation check</td><td>$75</td><td>Invalid Modulo Partition</td><td>Reject / Invalid Multiples Error</td></tr>
+                            <tr><td>TC-ATM-04</td><td>Exceeds absolute upper maximum ceiling bounds</td><td>$520</td><td>Invalid Upper Bound Partition</td><td>Reject / Limit Exceeded</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass-panel" id="ch-2">
+                <div class="challenge-title">
+                    <span class="badge">Example 2</span>
+                    <span>White Box Testing: Character Health State Architecture</span>
+                </div>
+                <div class="scenario-box">
+                    <strong>Structural Code Block:</strong>
+<pre><code>def process_health_state(hp):
+    if hp <= 0:
+        state = "DEAD"
+    elif hp < 30:
+        state = "CRITICAL"
+    else:
+        state = "HEALTHY"
+    return state</code></pre>
+                </div>
+
+                <table class="matrix-table" id="table-2">
+                    <thead>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <th>Target Execution Pathway Node</th>
+                            <th>Test Steps</th>
+                            <th>Test Data (hp)</th>
+                            <th>Expected Results</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-WBC-01</td>
+                            <td>First expression evaluation path true</td>
+                            <td>Execute process_health_state with boundary bound</td>
+                            <td>0</td>
+                            <td><input type="text" class="cell-input" placeholder="Output state string" data-ans="DEAD"></td>
+                        </tr>
+                        <tr>
+                            <td>TC-WBC-02</td>
+                            <td><input type="text" class="cell-input" placeholder="Describe branch path" data-ans="Elif expression check true"></td>
+                            <td>Execute process_health_state with sub-30 interior value</td>
+                            <td>15</td>
+                            <td>CRITICAL</td>
+                        </tr>
+                        <tr>
+                            <td>TC-WBC-03</td>
+                            <td>Else default structural path true</td>
+                            <td>Execute process_health_state with healthy variable state</td>
+                            <td><input type="text" class="cell-input" placeholder="Numeric value" data-ans="50"></td>
+                            <td>HEALTHY</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="action-container">
+                    <button class="btn-action btn-validate" onclick="verifyMatrix(2)"><i class="fa-solid fa-square-check"></i> Mark Answers</button>
+                    <button class="btn-action" onclick="toggleSolution(2)"><i class="fa-solid fa-eye"></i> Reveal Master Matrix</button>
+                </div>
+
+                <div class="solution-panel" id="sol-2">
+                    <h4><i class="fa-solid fa-circle-check"></i> Verified Production Solution Map</h4>
+                    <table class="solution-table">
+                        <thead><tr><th>ID</th><th>Target Path Node</th><th>Steps</th><th>Data (hp)</th><th>Expected Results</th></tr></thead>
+                        <tbody>
+                            <tr><td>TC-WBC-01</td><td>First expression evaluation path true</td><td>Execute process_health_state with boundary bound</td><td>0</td><td>DEAD</td></tr>
+                            <tr><td>TC-WBC-02</td><td>Elif expression check true</td><td>Execute process_health_state with sub-30 interior value</td><td>15</td><td>CRITICAL</td></tr>
+                            <tr><td>TC-WBC-03</td><td>Else default structural path true</td><td>Execute process_health_state with healthy variable state</td><td>50 (Any value &ge; 30)</td><td>HEALTHY</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass-panel" id="ch-3">
+                <div class="challenge-title">
+                    <span class="badge">Example 3</span>
+                    <span>Grey Box Testing: Persistent Inventory Matrix Database Connectivity</span>
+                </div>
+                <div class="scenario-box">
+                    <strong>System Integration State Profile:</strong> Testing an online RPG Inventory manager system block. Verification engineers inspect the public API command interfaces while tracking the backend persistent SQLite schema engine state variables manually to catch mapping typos.
+                </div>
+
+                <table class="matrix-table" id="table-3">
+                    <thead>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <th>Functional Call Event</th>
+                            <th>Execution System Test Steps</th>
+                            <th>Internal State Variable Profile Validation Target</th>
+                            <th>Expected Results</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-GB-03-1</td>
+                            <td>addItem("Iron_Sword")</td>
+                            <td>Invoke API endpoint; query item table structure via connection handle</td>
+                            <td><input type="text" class="cell-input" placeholder="Expected table row modification field" data-ans="item_count incremented"></td>
+                            <td>API returns status 200; DB record updates seamlessly</td>
+                        </tr>
+                        <tr>
+                            <td>TC-GB-03-2</td>
+                            <td>removeItem("Gold_Ring")</td>
+                            <td><input type="text" class="cell-input" placeholder="Describe query check steps" data-ans="Invoke removal API; execute SELECT count on item entity"></td>
+                            <td>Inventory system slots count decreases by exactly 1</td>
+                            <td>Item deleted; database references cleared successfully</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="action-container">
+                    <button class="btn-action btn-validate" onclick="verifyMatrix(3)"><i class="fa-solid fa-square-check"></i> Mark Answers</button>
+                    <button class="btn-action" onclick="toggleSolution(3)"><i class="fa-solid fa-eye"></i> Reveal Master Matrix</button>
+                </div>
+
+                <div class="solution-panel" id="sol-3">
+                    <h4><i class="fa-solid fa-circle-check"></i> Verified Production Solution Map</h4>
+                    <table class="solution-table">
+                        <thead><tr><th>ID</th><th>Functional Call Event</th><th>Execution Steps</th><th>Internal State Profile</th><th>Expected Results</th></tr></thead>
+                        <tbody>
+                            <tr><td>TC-GB-03-1</td><td>addItem("Iron_Sword")</td><td>Invoke API endpoint; query item table structure via connection handle</td><td>item_count incremented by 1 (or DB insert)</td><td>API returns status 200; DB record updates seamlessly</td></tr>
+                            <tr><td>TC-GB-03-2</td><td>removeItem("Gold_Ring")</td><td>Invoke removal API; execute SELECT count on item entity</td><td>Inventory system slots count decreases by exactly 1</td><td>Item deleted; database references cleared successfully</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass-panel" id="ch-4">
+                <div class="challenge-title">
+                    <span class="badge">Example 4</span>
+                    <span>Black Box Testing: Password Validator Matrix Bounds</span>
+                </div>
+                <div class="scenario-box">
+                    <strong>Structural Requirement Boundary:</strong> User credential initialization processing script demands a password string. Length constraints specify it must contain at least 8 individual characters, extending up to a maximum architectural limitation of 20 characters.
+                </div>
+
+                <table class="matrix-table" id="table-4">
+                    <thead>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <th>Test Case Scenario Focus Profile</th>
+                            <th>Test Data Input Variant</th>
+                            <th>Expected Results</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-PWD-01</td>
+                            <td>Absolute Lower Failure Boundary Margin Check</td>
+                            <td>"Pass1!" (6 characters)</td>
+                            <td><select class="cell-dropdown" data-ans="Reject / Length Exception"><option value="">--Select System Action--</option><option value="Accept / Complete Setup">Accept / Complete Setup</option><option value="Reject / Length Exception">Reject / Length Exception</option></select></td>
+                        </tr>
+                        <tr>
+                            <td>TC-PWD-02</td>
+                            <td><input type="text" class="cell-input" placeholder="Define exact threshold check" data-ans="Minimum Boundary Intersection Verification"></td>
+                            <td>"ValidP@ss12" (12 characters)</td>
+                            <td>Accept and map to credentials model profile</td>
+                        </tr>
+                        <tr>
+                            <td>TC-PWD-03</td>
+                            <td>Upper Critical Limit Boundary Check</td>
+                            <td><input type="text" class="cell-input" placeholder="Generate extreme error data string" data-ans="SuperLongPasswordThatExceedsTheLimit"></td>
+                            <td>Reject / Length Exception</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="action-container">
+                    <button class="btn-action btn-validate" onclick="verifyMatrix(4)"><i class="fa-solid fa-square-check"></i> Mark Answers</button>
+                    <button class="btn-action" onclick="toggleSolution(4)"><i class="fa-solid fa-eye"></i> Reveal Master Matrix</button>
+                </div>
+
+                <div class="solution-panel" id="sol-4">
+                    <h4><i class="fa-solid fa-circle-check"></i> Verified Production Solution Map</h4>
+                    <table class="solution-table">
+                        <thead><tr><th>ID</th><th>Scenario Focus Profile</th><th>Data Input Variant</th><th>Expected Results</th></tr></thead>
+                        <tbody>
+                            <tr><td>TC-PWD-01</td><td>Absolute Lower Failure Boundary Margin Check</td><td>"Pass1!" (6 characters)</td><td>Reject / Length Exception</td></tr>
+                            <tr><td>TC-PWD-02</td><td>Minimum Boundary Intersection Verification (Or Valid string check)</td><td>"ValidP@ss12" (12 characters)</td><td>Accept and map to credentials model profile</td></tr>
+                            <tr><td>TC-PWD-03</td><td>Upper Critical Limit Boundary Check</td><td>A string exceeding 20 characters (e.g. "SuperLongPasswordThatExceedsTheLimit")</td><td>Reject / Length Exception</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass-panel" id="ch-5">
+                <div class="challenge-title">
+                    <span class="badge">Example 5</span>
+                    <span>White Box Testing: Nested Loop Integrity Validation Matrix</span>
+                </div>
+                <div class="scenario-box">
+                    <strong>Algorithmic Implementation Core:</strong>
+<pre><code>def render_matrix_layer(grid):
+    active_tokens = 0
+    for row in grid:
+        for cell in row:
+            if cell == "TOKEN":
+                active_tokens += 1
+    return active_tokens</code></pre>
+                </div>
+
+                <table class="matrix-table" id="table-5">
+                    <thead>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <th>Test Scenario Framework</th>
+                            <th>Structural Matrix Input Data Setup</th>
+                            <th>Expected Results</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-MAT-01</td>
+                            <td>Completely completely empty multi-dimensional container check</td>
+                            <td>[[], [], []]</td>
+                            <td><input type="text" class="cell-input" placeholder="Integer return evaluation" data-ans="0"></td>
+                        </tr>
+                        <tr>
+                            <td>TC-MAT-02</td>
+                            <td>Homogeneous non-target cell data configuration matching</td>
+                            <td><input type="text" class="cell-input" placeholder="Array initialization literal code" data-ans='[["EMPTY", "EMPTY"], ["EMPTY"]]'></td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>TC-MAT-03</td>
+                            <td>Target instantiation hit node parsing validation</td>
+                            <td>[["TOKEN", "EMPTY"], ["EMPTY", "TOKEN"]]</td>
+                            <td><input type="text" class="cell-input" placeholder="Integer return evaluation" data-ans="2"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="action-container">
+                    <button class="btn-action btn-validate" onclick="verifyMatrix(5)"><i class="fa-solid fa-square-check"></i> Mark Answers</button>
+                    <button class="btn-action" onclick="toggleSolution(5)"><i class="fa-solid fa-eye"></i> Reveal Master Matrix</button>
+                </div>
+
+                <div class="solution-panel" id="sol-5">
+                    <h4><i class="fa-solid fa-circle-check"></i> Verified Production Solution Map</h4>
+                    <table class="solution-table">
+                        <thead><tr><th>ID</th><th>Scenario Framework</th><th>Matrix Input Data Setup</th><th>Expected Results</th></tr></thead>
+                        <tbody>
+                            <tr><td>TC-MAT-01</td><td>Completely completely empty multi-dimensional container check</td><td>[[], [], []]</td><td>0</td></tr>
+                            <tr><td>TC-MAT-02</td><td>Homogeneous non-target cell data configuration matching</td><td>[["EMPTY", "EMPTY"], ["EMPTY"]] (Any structure without tokens)</td><td>0</td></tr>
+                            <tr><td>TC-MAT-03</td><td>Target instantiation hit node parsing validation</td><td>[["TOKEN", "EMPTY"], ["EMPTY", "TOKEN"]]</td><td>2</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass-panel" id="ch-6">
+                <div class="challenge-title">
+                    <span class="badge">Example 6</span>
+                    <span>Comprehensive Black Box Matrix: E-Commerce Multi-Tier Discount Matrix Hierarchy</span>
+                </div>
+                <div class="scenario-box">
+                    <strong>Complex Conditional Schema Specifications:</strong> Cart subtotal evaluation rules determine strategic system outcomes. Cart subtotal value of less than $100 yields 0% modifier rate deductions. Balances spanning equal to or greater than $100 but strictly strictly below $500 score a baseline 10% modification tier. Values from $500 onwards clear the path for a 20% flat discount modifier index application. If a user enters a legacy promotional coupon tag string "VINTAGE2026", it tethers an extra 5% subtraction modifier to the layout, completely completely bypassing regular restriction layers.
+                </div>
+
+                <table class="matrix-table" id="table-6">
+                    <thead>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <th>Test Scenario Architecture Target</th>
+                            <th>Input Cart Subtotal Value</th>
+                            <th>Input Coupon String Field</th>
+                            <th>Expected Output Modifier Allocation (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-DISC-01</td>
+                            <td>Sub-minimal baseline lower edge boundary execution pass</td>
+                            <td>$50.00</td>
+                            <td>"NONE"</td>
+                            <td><input type="text" class="cell-input" placeholder="Percentage value string" data-ans="0%"></td>
+                        </tr>
+                        <tr>
+                            <td>TC-DISC-02</td>
+                            <td>Exact boundary tier switch intersection point minimal tier</td>
+                            <td><input type="text" class="cell-input" placeholder="Numeric value" data-ans="100.00"></td>
+                            <td>"NONE"</td>
+                            <td>10%</td>
+                        </tr>
+                        <tr>
+                            <td>TC-DISC-03</td>
+                            <td>Interior valid test location matrix evaluation parameters midpoint</td>
+                            <td>$250.00</td>
+                            <td>"NONE"</td>
+                            <td><input type="text" class="cell-input" placeholder="Percentage value string" data-ans="10%"></td>
+                        </tr>
+                        <tr>
+                            <td>TC-DISC-04</td>
+                            <td>Upper sub-boundary maximum tracking location point limit line</td>
+                            <td>$499.99</td>
+                            <td>"NONE"</td>
+                            <td><input type="text" class="cell-input" placeholder="Percentage value string" data-ans="10%"></td>
+                        </tr>
+                        <tr>
+                            <td>TC-DISC-05</td>
+                            <td>Exact maximum ceiling tier crossover boundary point initialization</td>
+                            <td>$500.00</td>
+                            <td>"NONE"</td>
+                            <td><select class="cell-dropdown" data-ans="20%"><option value="">--Select Tier Value--</option><option value="10%">10%</option><option value="20%">20%</option><option value="25%">25%</option></select></td>
+                        </tr>
+                        <tr>
+                            <td>TC-DISC-06</td>
+                            <td>Extreme upper overflow margin check configuration verification</td>
+                            <td>$1500.00</td>
+                            <td>"NONE"</td>
+                            <td>20%</td>
+                        </tr>
+                        <tr>
+                            <td>TC-DISC-07</td>
+                            <td>Coupon logic execution bypass tracking path node A</td>
+                            <td>$50.00</td>
+                            <td>"VINTAGE2026"</td>
+                            <td><input type="text" class="cell-input" placeholder="Percentage value string" data-ans="5%"></td>
+                        </tr>
+                        <tr>
+                            <td>TC-DISC-08</td>
+                            <td>Coupon logic execution bypass tracking path node B compounded check</td>
+                            <td>$500.00</td>
+                            <td>"VINTAGE2026"</td>
+                            <td><input type="text" class="cell-input" placeholder="Percentage value string" data-ans="25%"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="action-container">
+                    <button class="btn-action btn-validate" onclick="verifyMatrix(6)"><i class="fa-solid fa-square-check"></i> Mark Answers</button>
+                    <button class="btn-action" onclick="toggleSolution(6)"><i class="fa-solid fa-eye"></i> Reveal Master Matrix</button>
+                </div>
+
+                <div class="solution-panel" id="sol-6">
+                    <h4><i class="fa-solid fa-circle-check"></i> Verified Production Solution Map</h4>
+                    <table class="solution-table">
+                        <thead><tr><th>ID</th><th>Scenario Target</th><th>Subtotal Data</th><th>Coupon Data</th><th>Expected Output (%)</th></tr></thead>
+                        <tbody>
+                            <tr><td>TC-DISC-01</td><td>Sub-minimal baseline lower edge boundary execution pass</td><td>$50.00</td><td>"NONE"</td><td>0%</td></tr>
+                            <tr><td>TC-DISC-02</td><td>Exact boundary tier switch intersection point minimal tier</td><td>$100.00</td><td>"NONE"</td><td>10%</td></tr>
+                            <tr><td>TC-DISC-03</td><td>Interior valid test location matrix evaluation parameters midpoint</td><td>$250.00</td><td>"NONE"</td><td>10%</td></tr>
+                            <tr><td>TC-DISC-04</td><td>Upper sub-boundary maximum tracking location point limit line</td><td>$499.99</td><td>"NONE"</td><td>10%</td></tr>
+                            <tr><td>TC-DISC-05</td><td>Exact maximum ceiling tier crossover boundary point initialization</td><td>$500.00</td><td>"NONE"</td><td>20%</td></tr>
+                            <tr><td>TC-DISC-06</td><td>Extreme upper overflow margin check configuration verification</td><td>$1500.00</td><td>"NONE"</td><td>20%</td></tr>
+                            <tr><td>TC-DISC-07</td><td>Coupon logic execution bypass tracking path node A</td><td>$50.00</td><td>"VINTAGE2026"</td><td>5%</td></tr>
+                            <tr><td>TC-DISC-08</td><td>Coupon logic execution bypass tracking path node B compounded check</td><td>$500.00</td><td>"VINTAGE2026"</td><td>25%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass-panel" id="ch-7">
+                <div class="challenge-title">
+                    <span class="badge">Example 7</span>
+                    <span>Grey Box Testing: Session State Token Expiry Workflows</span>
+                </div>
+                <div class="scenario-box">
+                    <strong>Architectural Configuration State Profile:</strong> Validating client-side cookie expiration mechanics alongside explicit web container authentication subsystem memory tables. Testing token validation states where lifetime thresholds equal 3600 seconds.
+                </div>
+
+                <table class="matrix-table" id="table-7">
+                    <thead>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <th>Test Scenario</th>
+                            <th>Test Steps</th>
+                            <th>Internal Token Lifetime Configuration Check (Seconds)</th>
+                            <th>Expected Client Framework UI Response View State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-SES-01</td>
+                            <td>Active operational interface continuity check</td>
+                            <td>Pass clean token variable structure to core engine tracking layer</td>
+                            <td>1800</td>
+                            <td><input type="text" class="cell-input" placeholder="Describe layout response state" data-ans="Dashboard displays active session info"></td>
+                        </tr>
+                        <tr>
+                            <td>TC-SES-02</td>
+                            <td>Exact limit boundary intersection check</td>
+                            <td><input type="text" class="cell-input" placeholder="Define step sequence query parameters" data-ans="Simulate operational check update precisely at execution bound"></td>
+                            <td>3600</td>
+                            <td>Session expires smoothly; prompt login request container</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="action-container">
+                    <button class="btn-action btn-validate" onclick="verifyMatrix(7)"><i class="fa-solid fa-square-check"></i> Mark Answers</button>
+                    <button class="btn-action" onclick="toggleSolution(7)"><i class="fa-solid fa-eye"></i> Reveal Master Matrix</button>
+                </div>
+
+                <div class="solution-panel" id="sol-7">
+                    <h4><i class="fa-solid fa-circle-check"></i> Verified Production Solution Map</h4>
+                    <table class="solution-table">
+                        <thead><tr><th>ID</th><th>Scenario</th><th>Steps</th><th>Lifetime Value</th><th>Expected UI State</th></tr></thead>
+                        <tbody>
+                            <tr><td>TC-SES-01</td><td>Active operational interface continuity check</td><td>Pass clean token variable structure to core engine tracking layer</td><td>1800</td><td>Dashboard displays active session info (Access Granted)</td></tr>
+                            <tr><td>TC-SES-02</td><td>Exact limit boundary intersection check</td><td>Simulate operational check update precisely at execution bound</td><td>3600</td><td>Session expires smoothly; prompt login request container</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass-panel" id="ch-8">
+                <div class="challenge-title">
+                    <span class="badge">Example 8</span>
+                    <span>White Box Testing: Boolean Expression Evaluation Node Coverage Matrix</span>
+                </div>
+                <div class="scenario-box">
+                    <strong>Logical Expression Branch String:</strong>
+<pre><code>def evaluate_clearance_level(is_admin, system_override_flag):
+    if is_admin or system_override_flag:
+        return "ACCESS_GRANTED"
+    return "ACCESS_DENIED"</code></pre>
+                </div>
+
+                <table class="matrix-table" id="table-8">
+                    <thead>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <th>is_admin Input Condition</th>
+                            <th>system_override_flag Input Condition</th>
+                            <th>Expected Internal Evaluation Path Target State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-BOOL-01</td>
+                            <td>True</td>
+                            <td>False</td>
+                            <td><input type="text" class="cell-input" placeholder="Output system string" data-ans="ACCESS_GRANTED"></td>
+                        </tr>
+                        <tr>
+                            <td>TC-BOOL-02</td>
+                            <td>False</td>
+                            <td><select class="cell-dropdown" data-ans="True"><option value="">--Select Flag Value--</option><option value="True">True</option><option value="False">False</option></select></td>
+                            <td>ACCESS_GRANTED</td>
+                        </tr>
+                        <tr>
+                            <td>TC-BOOL-03</td>
+                            <td>False</td>
+                            <td>False</td>
+                            <td><input type="text" class="cell-input" placeholder="Output system string" data-ans="ACCESS_DENIED"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="action-container">
+                    <button class="btn-action btn-validate" onclick="verifyMatrix(8)"><i class="fa-solid fa-square-check"></i> Mark Answers</button>
+                    <button class="btn-action" onclick="toggleSolution(8)"><i class="fa-solid fa-eye"></i> Reveal Master Matrix</button>
+                </div>
+
+                <div class="solution-panel" id="sol-8">
+                    <h4><i class="fa-solid fa-circle-check"></i> Verified Production Solution Map</h4>
+                    <table class="solution-table">
+                        <thead><tr><th>ID</th><th>is_admin Condition</th><th>system_override_flag Condition</th><th>Expected Evaluation Target State</th></tr></thead>
+                        <tbody>
+                            <tr><td>TC-BOOL-01</td><td>True</td><td>False</td><td>ACCESS_GRANTED</td></tr>
+                            <tr><td>TC-BOOL-02</td><td>False</td><td>True</td><td>ACCESS_GRANTED</td></tr>
+                            <tr><td>TC-BOOL-03</td><td>False</td><td>False</td><td>ACCESS_DENIED</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass-panel" id="ch-9">
+                <div class="challenge-title">
+                    <span class="badge">Example 9</span>
+                    <span>Black Box Testing: Flight Booking Age Pricing Classification Matrix</span>
+                </div>
+                <div class="scenario-box">
+                    <strong>Business Logic Segmentation Parameters:</strong> Age metrics structure fare calculations entirely. Age values strictly strictly less than 2 years map directly to the Infant Free Class profile. Age records from 2 up to but strictly strictly below 12 years assign the Child Fare tier structure index. All passengers matching age indices 12 and above translate directly into the Standard Adult Pricing model matrix space.
+                </div>
+
+                <table class="matrix-table" id="table-9">
+                    <thead>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <th>Age Variable Input Metric</th>
+                            <th>Target Boundary Partition Evaluation Category</th>
+                            <th>Expected Fare Profile Allocation Outcome</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-AGE-01</td>
+                            <td>1</td>
+                            <td>Infant Partition Bound Checked</td>
+                            <td><input type="text" class="cell-input" placeholder="Fare string outcome match" data-ans="Infant Free Class"></td>
+                        </tr>
+                        <tr>
+                            <td>TC-AGE-02</td>
+                            <td>2</td>
+                            <td><input type="text" class="cell-input" placeholder="Define active processing layer" data-ans="Child Fare partition lower boundary line"></td>
+                            <td>Child Fare</td>
+                        </tr>
+                        <tr>
+                            <td>TC-AGE-03</td>
+                            <td>11</td>
+                            <td>Child Fare internal upper sub-boundary checkpoint limit</td>
+                            <td><input type="text" class="cell-input" placeholder="Fare string outcome match" data-ans="Child Fare"></td>
+                        </tr>
+                        <tr>
+                            <td>TC-AGE-04</td>
+                            <td><input type="text" class="cell-input" placeholder="Integer edge case data value" data-ans="12"></td>
+                            <td>Adult Base Boundary Step Interaction Matrix Entry</td>
+                            <td>Standard Adult Pricing</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="action-container">
+                    <button class="btn-action btn-validate" onclick="verifyMatrix(9)"><i class="fa-solid fa-square-check"></i> Mark Answers</button>
+                    <button class="btn-action" onclick="toggleSolution(9)"><i class="fa-solid fa-eye"></i> Reveal Master Matrix</button>
+                </div>
+
+                <div class="solution-panel" id="sol-9">
+                    <h4><i class="fa-solid fa-circle-check"></i> Verified Production Solution Map</h4>
+                    <table class="solution-table">
+                        <thead><tr><th>ID</th><th>Age Input Metric</th><th>Boundary Partition Evaluation Category</th><th>Expected Allocation Outcome</th></tr></thead>
+                        <tbody>
+                            <tr><td>TC-AGE-01</td><td>1</td><td>Infant Partition Bound Checked</td><td>Infant Free Class</td></tr>
+                            <tr><td>TC-AGE-02</td><td>2</td><td>Child Fare partition lower boundary line</td><td>Child Fare</td></tr>
+                            <tr><td>TC-AGE-03</td><td>11</td><td>Child Fare internal upper sub-boundary checkpoint limit</td><td>Child Fare</td></tr>
+                            <tr><td>TC-AGE-04</td><td>12</td><td>Adult Base Boundary Step Interaction Matrix Entry</td><td>Standard Adult Pricing</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass-panel" id="ch-10">
+                <div class="challenge-title">
+                    <span class="badge">Example 10</span>
+                    <span>Grey Box Testing: Smart Contract Escrow State Settlement Engine</span>
+                </div>
+                <div class="scenario-box">
+                    <strong>Complex Stateful Pipeline Specifications:</strong> This structural scenario monitors state transitions across distributed ledger nodes alongside client validation steps. System routes state modifications dynamically through three sequential internal lifecycle constants: <code>"AWAITING_DEPOSIT"</code>, <code>"FUNDS_LOCKED"</code>, and <code>"ASSETS_DISBURSED"</code>. Developers evaluate function trigger signatures against low-level event listeners while modifying storage structures inside table models directly.
+                </div>
+
+                <table class="matrix-table" id="table-10">
+                    <thead>
+                        <tr>
+                            <th>State Target ID</th>
+                            <th>Initial Structural Node State</th>
+                            <th>Incoming Transaction Event Context Message Signature</th>
+                            <th>Storage Database Attribute Tracking Target Field</th>
+                            <th>Expected Next Lifecycle Target State Outcome</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-ESC-01</td>
+                            <td>"AWAITING_DEPOSIT"</td>
+                            <td>receiveFunds() with compliant payload parameters</td>
+                            <td>ledger_balance updates positively to tracking configuration amount</td>
+                            <td><input type="text" class="cell-input" placeholder="Target constant string" data-ans="FUNDS_LOCKED"></td>
+                        </tr>
+                        <tr>
+                            <td>TC-ESC-02</td>
+                            <td>"AWAITING_DEPOSIT"</td>
+                            <td>triggerDisbursal() executed prematurely without security validation keys</td>
+                            <td><input type="text" class="cell-input" placeholder="Expected row tracking constraint updates" data-ans="ledger_balance remains unchanged at zero baseline"></td>
+                            <td>No transition / Reject transaction trace framework tracking</td>
+                        </tr>
+                        <tr>
+                            <td>TC-ESC-03</td>
+                            <td>"FUNDS_LOCKED"</td>
+                            <td><input type="text" class="cell-input" placeholder="Define incoming transactional code signature trigger" data-ans="releaseEscrowPaymentVerification()"></td>
+                            <td>recipient_wallet field records matching asset balance transfers</td>
+                            <td>"ASSETS_DISBURSED"</td>
+                        </tr>
+                        <tr>
+                            <td>TC-ESC-04</td>
+                            <td>"FUNDS_LOCKED"</td>
+                            <td>receiveFunds() redundant event loop transmission invocation</td>
+                            <td>ledger_balance remains unchanged; throw duplicate exception logs</td>
+                            <td><select class="cell-dropdown" data-ans="FUNDS_LOCKED"><option value="">--Select Output State Line--</option><option value="AWAITING_DEPOSIT">AWAITING_DEPOSIT</option><option value="FUNDS_LOCKED">FUNDS_LOCKED</option><option value="ASSETS_DISBURSED">ASSETS_DISBURSED</option></select></td>
+                        </tr>
+                        <tr>
+                            <td>TC-ESC-05</td>
+                            <td>"ASSETS_DISBURSED"</td>
+                            <td>reverseTransactionProcess() invocation without master admin access keys</td>
+                            <td>ledger_state blocks updates; transaction trace flag marked failed</td>
+                            <td><input type="text" class="cell-input" placeholder="Target constant string" data-ans="ASSETS_DISBURSED"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="action-container">
+                    <button class="btn-action btn-validate" onclick="verifyMatrix(10)"><i class="fa-solid fa-square-check"></i> Mark Answers</button>
+                    <button class="btn-action" onclick="toggleSolution(10)"><i class="fa-solid fa-eye"></i> Reveal Master Matrix</button>
+                </div>
+
+                <div class="solution-panel" id="sol-10">
+                    <h4><i class="fa-solid fa-circle-check"></i> Verified Production Solution Map</h4>
+                    <table class="solution-table">
+                        <thead><tr><th>ID</th><th>Initial State</th><th>Transaction Event Message Signature Context</th><th>Database Attribute Target Field</th><th>Expected Next State Outcome</th></tr></thead>
+                        <tbody>
+                            <tr><td>TC-ESC-01</td><td>"AWAITING_DEPOSIT"</td><td>receiveFunds() with compliant payload parameters</td><td>ledger_balance updates positively to tracking configuration amount</td><td>FUNDS_LOCKED</td></tr>
+                            <tr><td>TC-ESC-02</td><td>"AWAITING_DEPOSIT"</td><td>triggerDisbursal() executed prematurely without security validation keys</td><td>ledger_balance remains unchanged at zero baseline</td><td>No transition / Reject transaction trace framework tracking</td></tr>
+                            <tr><td>TC-ESC-03</td><td>"FUNDS_LOCKED"</td><td>releaseEscrowPaymentVerification()</td><td>recipient_wallet field records matching asset balance transfers</td><td>"ASSETS_DISBURSED"</td></tr>
+                            <tr><td>TC-ESC-04</td><td>"FUNDS_LOCKED"</td><td>receiveFunds() redundant event loop transmission invocation</td><td>ledger_balance remains unchanged; throw duplicate exception logs</td><td>FUNDS_LOCKED</td></tr>
+                            <tr><td>TC-ESC-05</td><td>"ASSETS_DISBURSED"</td><td>reverseTransactionProcess() invocation without master admin access keys</td><td>ledger_state blocks updates; transaction trace flag marked failed</td><td>ASSETS_DISBURSED</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="extension-link-wrapper">
+            <p style="color: #8a94a6; margin-bottom: 12px; font-size: 14px;">Looking to return to standard warm-up paradigms or check structural definitions?</p>
+            <a href="exam.html" class="btn-primary" style="display: inline-block; text-decoration: none; background: linear-gradient(135deg, #7928ca 0%, #ff0080 100%); padding: 12px 24px;">
+                Proceed to Final Exam <i class="fa-solid fa-circle-arrow-right"></i>
+            </a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Confirm existing storage space references align with overall schema parameters
+            let stateStoreInstance = JSON.parse(localStorage.getItem('oop_exam_state'));
+            if (!stateStoreInstance) {
+                stateStoreInstance = {
+                    currentPhase: 6,
+                    isCompleted: false,
+                    scores: {
+                        definitions: { score: 0, total: 30, status: 'Not Started' },
+                        mcq: { score: 0, total: 30, status: 'Not Started' },
+                        saq: { score: 0, total: 30, status: 'Not Started' },
+                        code: { score: 0, total: 10, status: 'Not Started' },
+                        erd: { score: 0, total: 10, status: 'Not Started' },
+                        test: { score: 0, total: 15, status: 'In Progress' }
+                    }
+                };
+                localStorage.setItem('oop_exam_state', JSON.stringify(stateStoreInstance));
+            }
+
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                if(confirm('Are you absolutely certain you want to purge your current structural progress across all modules? This action cannot be undone.')) {
+                    localStorage.removeItem('oop_exam_state');
+                    window.location.href = 'index.html';
+                }
+            });
+        });
+
+        // Toggle visibility of reference solutions smoothly matching UI schemas
+        function toggleSolution(index) {
+            const panel = document.getElementById(`sol-${index}`);
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+            }
+        }
+
+        // Fuzzy verification engine accommodating typos and natural semantic variations smoothly
+        function matchTextFuzzy(userInput, modelAnswer) {
+            let processedUser = userInput.toLowerCase().replace(/[^a-z0-9]/g, '').trim();
+            let processedModel = modelAnswer.toLowerCase().replace(/[^a-z0-9]/g, '').trim();
+            
+            if (processedUser === processedModel) return true;
+            if (processedUser.includes(processedModel) || processedModel.includes(processedUser)) return true;
+            
+            // Shared structural testing keywords validation mapping overrides
+            if (processedModel.includes('reject') && processedUser.includes('err')) return true;
+            if (processedModel.includes('reject') && processedUser.includes('fail')) return true;
+            if (processedModel.includes('deny') && processedUser.includes('reject')) return true;
+            if (processedModel.includes('dead') && processedUser.includes('die')) return true;
+            if (processedModel.includes('increment') && processedUser.includes('add')) return true;
+            
+            return false;
+        }
+
+        // Evaluation processor loop updating state tracks dynamically on demand
+        function verifyMatrix(challengeIndex) {
+            const targetContainer = document.getElementById(`ch-${challengeIndex}`);
+            const inputElements = targetContainer.querySelectorAll('.cell-input, .cell-dropdown');
+            let correctCounter = 0;
+            let interactiveItemsCount = inputElements.length;
+
+            inputElements.forEach(element => {
+                let currentVal = element.value.trim();
+                let exactTargetAnswer = element.getAttribute('data-ans');
+
+                if (currentVal !== "" && matchTextFuzzy(currentVal, exactTargetAnswer)) {
+                    element.style.border = "1px solid var(--accent-green)";
+                    element.style.background = "rgba(0, 255, 170, 0.05)";
+                    correctCounter++;
+                } else {
+                    element.style.border = "1px solid var(--accent-red)";
+                    element.style.background = "rgba(255, 59, 48, 0.05)";
+                }
+            });
+
+            // Handle or remove existing indicator instances neatly
+            const legacyIndicator = targetContainer.querySelector('.feedback-lbl');
+            if (legacyIndicator) legacyIndicator.remove();
+
+            const metricDisplayNode = document.createElement('span');
+            metricDisplayNode.className = "feedback-lbl";
+            if (correctCounter === interactiveItemsCount) {
+                metricDisplayNode.className += " feedback-pass";
+                metricDisplayNode.innerHTML = `<i class='fa-solid fa-square-check'></i> Alignment Verified. Score: ${correctCounter} / ${interactiveItemsCount} Matches.`;
+            } else {
+                metricDisplayNode.className += " feedback-fail";
+                metricDisplayNode.innerHTML = `<i class='fa-solid fa-triangle-exclamation'></i> Mismatch Flagged. Score: ${correctCounter} / ${interactiveItemsCount} Correct. Verify bounds and typos.`;
+            }
+            targetContainer.querySelector('.action-container').appendChild(metricDisplayNode);
+
+            // Sync aggregate telemetry states with LocalStorage traces safely
+            updateGlobalTestingMetricsScore(challengeIndex, correctCounter, interactiveItemsCount);
+        }
+
+        function updateGlobalTestingMetricsScore(idx, matches, limits) {
+            let state = JSON.parse(localStorage.getItem('oop_exam_state'));
+            if(state) {
+                // Scaling matrix inputs proportionally to map into Phase 6 max scale value
+                let calculationFraction = matches / limits;
+                let segmentedMarkAllocation = Math.min(15, Math.round(calculationFraction * 1.5 * idx));
+                
+                state.scores.test.score = Math.max(state.scores.test.score, segmentedMarkAllocation);
+                if(state.scores.test.score >= 12) {
+                    state.scores.test.status = 'Completed';
+                } else {
+                    state.scores.test.status = 'In Progress';
+                }
+                localStorage.setItem('oop_exam_state', JSON.stringify(state));
+            }
+        }
+    </script>
+</body>
+</html>

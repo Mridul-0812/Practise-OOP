@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Engineering - Year 11 Term 2 Formal Examination</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0a0b10;
+            --bg-secondary: #12131c;
+            --bg-tertiary: #1a1c29;
+            --accent-cyan: #00f0ff;
+            --accent-purple: #9d4edd;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --success-color: #10b981;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Persistent Navigation Bar Blueprint */
+        .side-navbar {
+            width: 260px;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            letter-spacing: 1px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .nav-item a:hover, .nav-item.active a {
+            color: var(--text-main);
+            background-color: var(--bg-tertiary);
+            border-left: 3px solid var(--accent-cyan);
+        }
+
+        /* Real-time Scoring Console Dashboard */
+        .score-dashboard {
+            margin-top: auto;
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .score-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-cyan);
+            margin-bottom: 8px;
+        }
+
+        .score-counter {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .score-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Core Examination Layout Framework */
+        .main-content {
+            margin-left: 260px;
+            flex-grow: 1;
+            padding: 40px 60px;
+            max-width: 1200px;
+        }
+
+        .exam-header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 24px;
+            margin-bottom: 40px;
+        }
+
+        .exam-header h1 {
+            font-size: 2.2rem;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .exam-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+            background: var(--bg-secondary);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .meta-item {
+            font-size: 0.85rem;
+        }
+
+        .meta-label {
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .meta-value {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .exam-section {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--accent-cyan);
+            margin-top: 0;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .section-instructions {
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        /* Question Blocks UI Anatomy */
+        .question-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .question-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            padding-bottom: 8px;
+        }
+
+        .question-number {
+            font-weight: 700;
+            color: var(--accent-purple);
+        }
+
+        .marks-badge {
+            background: rgba(157, 78, 221, 0.15);
+            color: #d4a373;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* MCQs Layout Architecture */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-item:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.02);
+        }
+
+        .option-radio {
+            margin-top: 4px;
+        }
+
+        .option-label {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Match-Up Interface Framework */
+        .matchup-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .matchup-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .matchup-term {
+            background: var(--bg-secondary);
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .matchup-select {
+            background: var(--bg-primary);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            outline: none;
+            width: 50px;
+            text-align: center;
+        }
+
+        .matchup-def {
+            background: var(--bg-secondary);
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .def-letter {
+            background: var(--bg-tertiary);
+            color: var(--accent-cyan);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        /* Text Input Workspace */
+        .student-response-pane {
+            width: 100%;
+            background: var(--bg-primary);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: vertical;
+            margin-bottom: 16px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .student-response-pane:focus {
+            border-color: var(--accent-purple);
+        }
+
+        /* Complex Technical Diagram Mappings */
+        .diagram-canvas {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid var(--border-color);
+        }
+
+        .diagram-svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* High-Order Coding Environments */
+        .code-container-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .code-blueprint-view {
+            background: #090a0f;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 6px;
+            padding: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #a9b1d6;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .code-editor-area {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            background: #0d0e15;
+            color: #00ff66;
+            border-left: 4px solid var(--accent-cyan);
+            min-height: 250px;
+        }
+
+        /* Dense Annoying Tables Archetype */
+        .annoying-exam-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.85rem;
+        }
+
+        .annoying-exam-table th {
+            background: var(--bg-tertiary);
+            color: var(--accent-cyan);
+            font-weight: 600;
+            text-align: left;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .annoying-exam-table td {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            vertical-align: top;
+            background: var(--bg-secondary);
+        }
+
+        .annoying-exam-table input[type="text"] {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px;
+            border-radius: 4px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .annoying-exam-table input[type="text"]:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        /* Professional Teacher Allocation Control */
+        .teacher-grading-hub {
+            background: rgba(157, 78, 221, 0.05);
+            border: 1px solid rgba(157, 78, 221, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .grading-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .allocation-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .allocation-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .marks-dropdown {
+            background: var(--bg-primary);
+            color: #00f0ff;
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 700;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .solution-toggle-btn {
+            background: var(--bg-tertiary);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .solution-toggle-btn:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--text-muted);
+        }
+
+        .sample-answer-vault {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: rgba(16, 185, 129, 0.04);
+            border-left: 4px solid var(--success-color);
+            border-radius: 0 6px 6px 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .sample-answer-vault h4 {
+            margin: 0 0 8px 0;
+            color: var(--success-color);
+            font-size: 0.95rem;
+        }
+
+        .sample-answer-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+
+        .sample-answer-table th, .sample-answer-table td {
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 8px;
+            text-align: left;
+        }
+
+        .sample-answer-table th {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        /* Two-Column Code Interpretation Panels */
+        .interpretation-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 16px 0;
+        }
+
+        .matrix-panel {
+            background: #090a0f;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 14px;
+        }
+
+        .matrix-panel-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--accent-cyan);
+            margin-bottom: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Actions Bar Footer blueprint */
+        .exam-actions-bar {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 260px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 16px 60px;
+            display: flex;
+            justify-content: flex-end;
+            z-index: 90;
+        }
+
+        .submit-exam-btn {
+            background: linear-gradient(135deg, var(--accent-purple), #7209b7);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(157, 78, 221, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .submit-exam-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(157, 78, 221, 0.45);
+        }
+
+        .spacer-block {
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="side-navbar">
+        <div class="nav-brand">
+            <i class="fas fa-laptop-code"></i>
+            <span>SWE ENGINE</span>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active"><a href="#section-mcq"><i class="fas fa-list-ol"></i> Phase 1: Multiple Choice</a></li>
+            <li class="nav-item"><a href="#section-matchup"><i class="fas fa-grip-lines"></i> Phase 2: Definition Match</a></li>
+            <li class="nav-item"><a href="#section-saq"><i class="fas fa-pen-alt"></i> Phase 3: Short Answer</a></li>
+            <li class="nav-item"><a href="#section-code"><i class="fas fa-code"></i> Phase 4: Pillar Coding</a></li>
+            <li class="nav-item"><a href="#section-diagrams"><i class="fas fa-project-diagram"></i> Phase 5: Architectural Analysis</a></li>
+            <li class="nav-item"><a href="#section-testing"><i class="fas fa-vial"></i> Phase 6: Robust Testing Matrix</a></li>
+        </ul>
+
+        <div class="score-dashboard">
+            <div class="score-title">Teacher Grading Score</div>
+            <div id="score-display" class="score-counter">0 / 100</div>
+            <div class="score-sub">Marks evaluated dynamically based on teacher dropdown selection inputs.</div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="exam-header">
+            <h1>Software Engineering - Year 11 Term 2</h1>
+            <p style="color: var(--text-muted); margin: 0;">Formal Examination Instrument: Object-Oriented Design and Verification Paradigm</p>
+            
+            <div class="exam-meta-grid">
+                <div class="meta-item">
+                    <span class="meta-label">Allocation Time</span>
+                    <span class="meta-value">60 Minutes</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Total Marks Available</span>
+                    <span class="meta-value">100 Marks</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Permitted Material</span>
+                    <span class="meta-value">Non-programmable calculator</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Syllabus Framework</span>
+                    <span class="meta-value">NSW Software Engineering (OOP Blueprint)</span>
+                </div>
+            </div>
+        </header>
+
+        <section id="section-mcq" class="exam-section">
+            <div class="section-title">Phase 1: Multiple Choice Questions (10 Questions, 10 Marks)</div>
+            <div class="section-instructions">
+                Select the single most correct response option for each question item. Each correct option maps directly to exactly one (1) unit mark mark value.
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 1</span>
+                    <span class="marks-badge">1 Mark</span>
+                </div>
+                <div class="question-text">
+                    An engineer is designing a financial transaction router. The design specifies that client routines cannot read or change the floating-point `__cleared_balance` attribute directly; instead, any mutation must traverse the `post_ledger_entry()` interface wrapper to evaluate fraud detection invariants. Which primary pillar of object-oriented paradigm is being operationalised?
+                </div>
+                <div class="options-list">
+                    <label class="option-item">
+                        <input type="radio" name="mcq1" class="option-radio">
+                        <span class="option-label">A) Abstraction, because low-level structural code complexity is completely hidden behind simplified parameter lists.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq1" class="option-radio">
+                        <span class="option-label">B) Inheritance, because the method overrides baseline platform rules using dynamic lookup features.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq1" class="option-radio">
+                        <span class="option-label">C) Polymorphism, because multiple distinct object entities can handle the routing array interface.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq1" class="option-radio">
+                        <span class="option-label">D) Encapsulation, because data state metrics are structurally bundled with internal functions while restricting arbitrary external manipulation.</span>
+                    </label>
+                </div>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Teacher Evaluation Award:</span>
+                            <select class="marks-dropdown score-impact" data-max="1">
+                                <option value="0">0 Marks</option>
+                                <option value="1">1 Mark</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-mcq1')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-mcq1" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Alignment):</h4>
+                        <strong>Correct Option: D</strong><br>
+                        <em>Justification:</em> Encapsulation focuses heavily on wrapping data fields and protecting state attributes from direct modification via access restrictions (such as Python name mangling via double underscores), routing interaction exclusively through validated method access pipelines to maximize system state data integrity.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 2</span>
+                    <span class="marks-badge">1 Mark</span>
+                </div>
+                <div class="question-text">
+                    Consider the conceptual lifecycle differences between a Class asset configuration blueprint and an Instance entity structure map. Which architectural option describes their operational state in runtime environments accurately?
+                </div>
+                <div class="options-list">
+                    <label class="option-item">
+                        <input type="radio" name="mcq2" class="option-radio">
+                        <span class="option-label">A) A class allocation occupies persistent computer execution memory registers, whereas instances are purely conceptual compiler definitions.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq2" class="option-radio">
+                        <span class="option-label">B) A class acts as a logical structural roadmap defining attributes and functions, whereas an instance is an isolated concrete entity built from that roadmap residing within active memory registers with its own state values.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq2" class="option-radio">
+                        <span class="option-label">C) Classes cannot declare functional implementation paths, whereas instances are forced to define unique method procedures at initialization.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq2" class="option-radio">
+                        <span class="option-label">D) The instance definition retains structural parameters across multiple unrelated program modules, whereas class files remain locked to localized code spaces.</span>
+                    </label>
+                </div>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Teacher Evaluation Award:</span>
+                            <select class="marks-dropdown score-impact" data-max="1">
+                                <option value="0">0 Marks</option>
+                                <option value="1">1 Mark</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-mcq2')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-mcq2" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Alignment):</h4>
+                        <strong>Correct Option: B</strong><br>
+                        <em>Justification:</em> A clear distinction between Class and Instance is structural vs tracking state. The class is static structural architecture (the text template), whereas an instance represents allocated computer hardware resource blocks containing variable values unique to that item record entity.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 3</span>
+                    <span class="marks-badge">1 Mark</span>
+                </div>
+                <div class="question-text">
+                    When designing software schemas via an Object-Oriented Analysis and Design (OOAD) approach, an engineer realizes that `FreightTruck`, `CourierVan`, and `ElectricScooter` all replicate attributes like `registration_id`, `maximum_payload_mass`, and `dispatch_route()`. What action should the engineer take to apply clean generalization rules?
+                </div>
+                <div class="options-list">
+                    <label class="option-item">
+                        <input type="radio" name="mcq3" class="option-radio">
+                        <span class="option-label">A) Implement deep polymorphism routines where every sub-entity defines unique unrelated storage schemas for those fields.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq3" class="option-radio">
+                        <span class="option-label">B) Refactor by applying under-generalization strategies to ensure each distinct item maintains decoupled variations to scale easily.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq3" class="option-radio">
+                        <span class="option-label">C) Extract common fields upward into a comprehensive `Vehicle` superclass, making the specific transportation classes extend this parent layout to reduce duplication.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq3" class="option-radio">
+                        <span class="option-label">D) Create an overarching database model where instances are merged into a single huge flat-file entity dictionary.</span>
+                    </label>
+                </div>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Teacher Evaluation Award:</span>
+                            <select class="marks-dropdown score-impact" data-max="1">
+                                <option value="0">0 Marks</option>
+                                <option value="1">1 Mark</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-mcq3')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-mcq3" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Alignment):</h4>
+                        <strong>Correct Option: C</strong><br>
+                        <em>Justification:</em> Generalization is the structural design process of extracting duplicated state properties and behavior paths upward from lower concrete classifications into a high-level parent blueprint class, utilizing inheritance loops during coding to eliminate structural maintenance duplication.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 4</span>
+                    <span class="marks-badge">1 Mark</span>
+                </div>
+                <div class="question-text">
+                    What software vulnerability risk surfaces if a system architecture features extreme "Over-Generalization"?
+                </div>
+                <div class="options-list">
+                    <label class="option-item">
+                        <input type="radio" name="mcq4" class="option-radio">
+                        <span class="option-label">A) The codebase requires complete procedural variable allocation maps for all class models.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq4" class="option-radio">
+                        <span class="option-label">B) Unique attributes specific to select sub-classes are forced upward into a generic master class layout, forcing inappropriate fields onto other child classes.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq4" class="option-radio">
+                        <span class="option-label">C) Automated validation compilers lose the ability to detect type violations during black box operations.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq4" class="option-radio">
+                        <span class="option-label">D) The target environment forces the instantiation of abstract entities inside localized evaluation stacks.</span>
+                    </label>
+                </div>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Teacher Evaluation Award:</span>
+                            <select class="marks-dropdown score-impact" data-max="1">
+                                <option value="0">0 Marks</option>
+                                <option value="1">1 Mark</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-mcq4')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-mcq4" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Alignment):</h4>
+                        <strong>Correct Option: B</strong><br>
+                        <em>Justification:</em> Over-generalization occurs when a designer forces traits that belong to only a few subclass objects up into a shared superclass. For example, adding an `anchor_depth` attribute to a generic `Vehicle` parent class forces `FreightTruck` and `ElectricScooter` to maintain meaningless state variables.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 5</span>
+                    <span class="marks-badge">1 Mark</span>
+                </div>
+                <div class="question-text">
+                    In Python, what explicit structural compiler engine utility does the `super().__init__()` statement perform when executed from inside a nested sub-class constructor declaration block?
+                </div>
+                <div class="options-list">
+                    <label class="option-item">
+                        <input type="radio" name="mcq5" class="option-radio">
+                        <span class="option-label">A) It converts all current parameter assignments into public data strings to bypass local scoping limits.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq5" class="option-radio">
+                        <span class="option-label">B) It instantly copies the memory layout reference ID of an object down into an initialization tracking vector.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq5" class="option-radio">
+                        <span class="option-label">C) It systematically calls the constructor routine of the immediate parent class, ensuring that inherited base attributes are properly configured.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq5" class="option-radio">
+                        <span class="option-label">D) It acts as a static typing flag that overrides polymorphic methods at build time.</span>
+                    </label>
+                </div>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Teacher Evaluation Award:</span>
+                            <select class="marks-dropdown score-impact" data-max="1">
+                                <option value="0">0 Marks</option>
+                                <option value="1">1 Mark</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-mcq5')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-mcq5" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Alignment):</h4>
+                        <strong>Correct Option: C</strong><br>
+                        <em>Justification:</em> The `super()` interface links the child instantiation line to the base parent constructor blueprint. This ensures fields handled by the parent initialization script are loaded without requiring the child script to re-declare or manually duplicate those core property parameters.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 6</span>
+                    <span class="marks-badge">1 Mark</span>
+                </div>
+                <div class="question-text">
+                    Review the following definition: "A structural system context wherein a child entity or component is linked intimately to a master controller container object; if that master controller container is dropped or deleted from execution memory registers, all child component parts are automatically deleted too." Which relationship form does this delineate?
+                </div>
+                <div class="options-list">
+                    <label class="option-item">
+                        <input type="radio" name="mcq6" class="option-radio">
+                        <span class="option-label">A) Loose Aggregation, because parts maintain active data pointers outside the core domain framework context.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq6" class="option-radio">
+                        <span class="option-label">B) Temporary Dependency, because the compiler drops transient variable types once local scoping loops finish execution tasks.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq6" class="option-radio">
+                        <span class="option-label">C) Strict Composition, because it defines an absolute ownership lifecycle pattern where child parts cannot exist independently of the parent container.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq6" class="option-radio">
+                        <span class="option-label">D) Public Association, because entities are linked through standard reference metrics without explicit life limits.</span>
+                    </label>
+                </div>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Teacher Evaluation Award:</span>
+                            <select class="marks-dropdown score-impact" data-max="1">
+                                <option value="0">0 Marks</option>
+                                <option value="1">1 Mark</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-mcq6')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-mcq6" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Alignment):</h4>
+                        <strong>Correct Option: C</strong><br>
+                        <em>Justification:</em> Composition represents strong part-whole ownership. If the owner instance goes out of bounds or is garbage-collected from computer ram space, its constituent dependencies disappear too because they lack an independent operational identity.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 7</span>
+                    <span class="marks-badge">1 Mark</span>
+                </div>
+                <div class="question-text">
+                    What explicit mechanism shifts an inherited base procedure signature into a dynamic polymorphism scenario during program execution?
+                </div>
+                <div class="options-list">
+                    <label class="option-item">
+                        <input type="radio" name="mcq7" class="option-radio">
+                        <span class="option-label">A) Method Overloading, which enables compiler mapping choices based on parameters evaluated during static build times.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq7" class="option-radio">
+                        <span class="option-label">B) Method Overriding via late binding, which allows runtime scripts to run the child's specific variation of a method instead of the parent's generic version.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq7" class="option-radio">
+                        <span class="option-label">C) Data variable name mangling, which modifies structural definitions to secure interface routines.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq7" class="option-radio">
+                        <span class="option-label">D) The complete elimination of abstract tracking classes from validation frameworks.</span>
+                    </label>
+                </div>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Teacher Evaluation Award:</span>
+                            <select class="marks-dropdown score-impact" data-max="1">
+                                <option value="0">0 Marks</option>
+                                <option value="1">1 Mark</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-mcq7')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-mcq7" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Alignment):</h4>
+                        <strong>Correct Option: B</strong><br>
+                        <em>Justification:</em> True runtime polymorphism relies heavily on Method Overriding combined with dynamic binding. The execution stack determines the target's explicit subclass assignment at runtime, calling the child's implementation override rather than the base class placeholder.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 8</span>
+                    <span class="marks-badge">1 Mark</span>
+                </div>
+                <div class="question-text">
+                    When designing structured test architecture suites, what differentiates a Grey Box diagnostic loop strategy from both Black Box validation configurations and White Box validation routines?
+                </div>
+                <div class="options-list">
+                    <label class="option-item">
+                        <input type="radio" name="mcq8" class="option-radio">
+                        <span class="option-label">A) It requires checking internal electrical processing register speeds rather than investigating operational program parameters.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq8" class="option-radio">
+                        <span class="option-label">B) It completely avoids looking at expected inputs, mapping assertions by monitoring erratic user data entries randomly.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq8" class="option-radio">
+                        <span class="option-label">C) It treats the application as a completely unmapped black box, relying on external specifications alone.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq8" class="option-radio">
+                        <span class="option-label">D) It combines high-level black box functional evaluation with high-level structural insights into underlying schemas, such as database entity keys or internal class tracking variables, without tracking individual statement execution lines.</span>
+                    </label>
+                </div>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Teacher Evaluation Award:</span>
+                            <select class="marks-dropdown score-impact" data-max="1">
+                                <option value="0">0 Marks</option>
+                                <option value="1">1 Mark</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-mcq8')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-mcq8" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Alignment):</h4>
+                        <strong>Correct Option: D</strong><br>
+                        <em>Justification:</em> Grey box validation methods occupy a middle ground. Testing is informed by foundational architectural knowledge of high-level systems design (such as data structure styles or class interfaces), but relies on external testing inputs rather than deep, single-line code statement coverage.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 9</span>
+                    <span class="marks-badge">1 Mark</span>
+                </div>
+                <div class="question-text">
+                    An architectural schema specifies an Abstract Class configuration targeting a specific workflow model. What structural constraint does this place on development workflows?
+                </div>
+                <div class="options-list">
+                    <label class="option-item">
+                        <input type="radio" name="mcq9" class="option-radio">
+                        <span class="option-label">A) It stops any sub-classes from using attributes inherited from that parent model layout.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq9" class="option-radio">
+                        <span class="option-label">B) The system cannot directly instantiate an object instance from that specific class blueprint; it can only instantiate concrete subclasses that implement all abstract methods.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq9" class="option-radio">
+                        <span class="option-label">C) It forces all operational methods inside the file space to drop input parameters to pass validation scripts.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq9" class="option-radio">
+                        <span class="option-label">D) It converts private visibility scopes down to public fields across all modules automatically.</span>
+                    </label>
+                </div>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Teacher Evaluation Award:</span>
+                            <select class="marks-dropdown score-impact" data-max="1">
+                                <option value="0">0 Marks</option>
+                                <option value="1">1 Mark</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-mcq9')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-mcq9" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Alignment):</h4>
+                        <strong>Correct Option: B</strong><br>
+                        <em>Justification:</em> Abstract classes act as enforcement frameworks. They cannot be directly instantiated via code calls. Instead, they require concrete child sub-classes to inherit from them and override their abstract placeholders before objects can be allocated in runtime memory spaces.
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 10</span>
+                    <span class="marks-badge">1 Mark</span>
+                </div>
+                <div class="question-text">
+                    Why does Object-Oriented Analysis and Design emphasize utilizing Primary and Foreign Key properties within an Entity-Relationship Diagram (ERD) architecture mapping session?
+                </div>
+                <div class="options-list">
+                    <label class="option-item">
+                        <input type="radio" name="mcq10" class="option-radio">
+                        <span class="option-label">A) To implement dynamic inheritance relationships directly within storage data pools.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq10" class="option-radio">
+                        <span class="option-label">B) To measure execution latency profiles when processing large loops.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq10" class="option-radio">
+                        <span class="option-label">C) To maintain relational data integrity, uniquely identify entity records via Primary Keys, and establish explicit relational mappings between discrete tables using Foreign Keys.</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="mcq10" class="option-radio">
+                        <span class="option-label">D) To map algorithmic execution steps before writing class method code blocks.</span>
+                    </label>
+                </div>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Teacher Evaluation Award:</span>
+                            <select class="marks-dropdown score-impact" data-max="1">
+                                <option value="0">0 Marks</option>
+                                <option value="1">1 Mark</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-mcq10')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-mcq10" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Alignment):</h4>
+                        <strong>Correct Option: C</strong><br>
+                        <em>Justification:</em> Keys underpin data integrity in storage models. Primary keys guarantee record uniqueness within an individual entity, while foreign keys establish clear relational linkages across tables, mirroring the object association mappings used in runtime systems.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-matchup" class="exam-section">
+            <div class="section-title">Phase 2: Core Concept Definition Match-Up Matrix (5 Marks)</div>
+            <div class="section-instructions">
+                Match each theoretical OOP concept listed on the left column with its correct technical definition statement on the right column. Select the matching option identifier letter from the selector dropdown box.
+            </div>
+
+            <div class="matchup-container">
+                <div class="matchup-list">
+                    <div class="matchup-term">
+                        <span>1. Polymorphism</span>
+                        <select class="matchup-select score-impact" data-max="1">
+                            <option value="0">-</option>
+                            <option value="1">A</option><option value="0">B</option><option value="0">C</option><option value="0">D</option><option value="0">E</option>
+                        </select>
+                    </div>
+                    <div class="matchup-term">
+                        <span>2. Encapsulation</span>
+                        <select class="matchup-select score-impact" data-max="1">
+                            <option value="0">-</option>
+                            <option value="0">A</option><option value="0">B</option><option value="1">C</option><option value="0">D</option><option value="0">E</option>
+                        </select>
+                    </div>
+                    <div class="matchup-term">
+                        <span>3. Inheritance</span>
+                        <select class="matchup-select score-impact" data-max="1">
+                            <option value="0">-</option>
+                            <option value="0">A</option><option value="0">B</option><option value="0">C</option><option value="1">D</option><option value="0">E</option>
+                        </select>
+                    </div>
+                    <div class="matchup-term">
+                        <span>4. Abstraction</span>
+                        <select class="matchup-select score-impact" data-max="1">
+                            <option value="0">-</option>
+                            <option value="0">A</option><option value="1">B</option><option value="0">C</option><option value="0">D</option><option value="0">E</option>
+                        </select>
+                    </div>
+                    <div class="matchup-term">
+                        <span>5. Aggregation</span>
+                        <select class="matchup-select score-impact" data-max="1">
+                            <option value="0">-</option>
+                            <option value="0">A</option><option value="0">B</option><option value="0">C</option><option value="0">D</option><option value="1">E</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="matchup-list">
+                    <div class="matchup-def">
+                        <span class="def-letter">A</span>
+                        <span class="def-text">The functional capacity for distinct objects to share a common method interface signature while executing unique individualized actions at runtime via dynamic binding.</span>
+                    </div>
+                    <div class="matchup-def">
+                        <span class="def-letter">B</span>
+                        <span class="def-text">The reduction of complexity by isolating the essential behavioral characteristics of an object while completely hiding intricate or irrelevant implementation technicalities.</span>
+                    </div>
+                    <div class="matchup-def">
+                        <span class="def-letter">C</span>
+                        <span class="def-text">The practice of bundling attributes and methods inside a class wrapper while using explicit access rules to shield internal data integrity from external scripts.</span>
+                    </div>
+                    <div class="matchup-def">
+                        <span class="def-letter">D</span>
+                        <span class="def-text">A hierarchical design link that allows a specialized child subclass to automatically inherit data attributes and operational methods from a generalized parent superclass.</span>
+                    </div>
+                    <div class="matchup-def">
+                        <span class="def-letter">E</span>
+                        <span class="def-text">A weak, asymmetrical part-whole structural relationship link between objects where component parts maintain their own lifecycle and can exist independently of the owner container.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="teacher-grading-hub" style="margin-top: 24px;">
+                <div class="grading-row">
+                    <div class="allocation-control">
+                        <span class="allocation-label">Teacher Evaluation Award for Match-Up (Cumulative):</span>
+                        <select class="marks-dropdown score-impact" data-max="5">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                    </div>
+                    <button class="solution-toggle-btn" onclick="toggleSolution('sol-matchup')"><i class="far fa-eye"></i> Show Master Key Matrix</button>
+                </div>
+                <div id="sol-matchup" class="sample-answer-vault">
+                    <h4>Syllabus Evaluation Solution Matrix:</h4>
+                    <table class="sample-answer-table">
+                        <thead>
+                            <tr><th>Concept Term</th><th>Correct Key Letter</th><th>Syllabus Alignment Core Context</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1. Polymorphism</td><td><strong>A</strong></td><td>Enables uniform calling commands to execute unique class actions at runtime.</td></tr>
+                            <tr><td>2. Encapsulation</td><td><strong>C</strong></td><td>Secures data values using visibility controls and defensive properties.</td></tr>
+                            <tr><td>3. Inheritance</td><td><strong>D</strong></td><td>Establishes code reuse hierarchies matching the structural "is-a" model.</td></tr>
+                            <tr><td>4. Abstraction</td><td><strong>B</strong></td><td>Hides how low-level procedures execute, highlighting only what an asset does.</td></tr>
+                            <tr><td>5. Aggregation</td><td><strong>E</strong></td><td>Defines a loose reference association where items survive parent lifecycle termination.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-saq" class="exam-section">
+            <div class="section-title">Phase 3: Syllabus Short Answer Questions (5 Questions, 15 Marks)</div>
+            <div class="section-instructions">
+                Provide clear, precise structural engineering responses. Use appropriate software design terminology (e.g., redundancy, maintainability, modularity, data integrity, data leakage, dynamic lookup).
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 11</span>
+                    <span class="marks-badge">3 Marks</span>
+                </div>
+                <div class="question-text">
+                    Explain why professional system design engineers enforce strict <strong>Encapsulation</strong> using private fields and validation access layers instead of allowing scripts to access attribute fields directly. Discuss the implications for software <strong>Data Integrity</strong>.
+                </div>
+                <textarea class="student-response-pane" rows="4" placeholder="Enter academic engineering justification statement text..."></textarea>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Grading Award (0-3):</span>
+                            <select class="marks-dropdown score-impact" data-max="3">
+                                <option value="0">0 Marks</option><option value="1">1 Mark</option><option value="2">2 Marks</option><option value="3">3 Marks</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-saq1')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-saq1" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Mapping):</h4>
+                        <p><strong>3 Marks:</strong> Clearly explains encapsulation mechanics, references state data integrity, and identifies risks of external manipulation.</p>
+                        <p><em>Exemplar Answer:</em> Encapsulation hides private variables to protect an object's internal data integrity. If external code can modify fields directly (e.g., setting `balance = -9999`), invalid states can corrupt data. Forcing all access through public setter methods allows validation rules (like if statements) to block illegal data updates. This encapsulates data validation within the object itself, keeping the system stable and reliable.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 12</span>
+                    <span class="marks-badge">3 Marks</span>
+                </div>
+                <div class="question-text">
+                    Differentiate between a <strong>Class</strong> and an <strong>Instance (Object)</strong> within computer runtime environments. Your answer must focus on data representation, code execution boundaries, and hardware memory management without using mathematical metaphors.
+                </div>
+                <textarea class="student-response-pane" rows="4" placeholder="Enter structural distinction statement text..."></textarea>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Grading Award (0-3):</span>
+                            <select class="marks-dropdown score-impact" data-max="3">
+                                <option value="0">0 Marks</option><option value="1">1 Mark</option><option value="2">2 Marks</option><option value="3">3 Marks</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-saq2')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-saq2" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Mapping):</h4>
+                        <p><strong>3 Marks:</strong> Distinguishes blueprint state vs active memory allocation clearly, noting resource lifecycles without math references.</p>
+                        <p><em>Exemplar Answer:</em> A class is a static blueprint that resides in code space. It defines the structural layout of variables and methods but allocates no tracking data blocks. In contrast, an instance is a concrete entity created in system memory (RAM). Each instance has its own unique memory address and maintains its own active state variables independently of other instances created from the same class.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 13</span>
+                    <span class="marks-badge">3 Marks</span>
+                </div>
+                <div class="question-text">
+                    Define <strong>Runtime Polymorphism</strong>. Explain how the execution engine uses method overriding and dynamic binding to evaluate object behavior during execution.
+                </div>
+                <textarea class="student-response-pane" rows="4" placeholder="Enter process description text..."></textarea>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Grading Award (0-3):</span>
+                            <select class="marks-dropdown score-impact" data-max="3">
+                                <option value="0">0 Marks</option><option value="1">1 Mark</option><option value="2">2 Marks</option><option value="3">3 Marks</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-saq3')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-saq3" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Mapping):</h4>
+                        <p><strong>3 Marks:</strong> Links uniform calling paths to dynamic runtime lookup behavior through method overriding signatures.</p>
+                        <p><em>Exemplar Answer:</em> Runtime polymorphism lets a collection of different objects respond to the exact same method call with their own unique behaviors. The execution engine uses dynamic binding to check the object's actual class type at runtime rather than relying on its initial variable declaration type. If a subclass has overridden a parent method, the engine executes that specific child version automatically.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 14</span>
+                    <span class="marks-badge">3 Marks</span>
+                </div>
+                <div class="question-text">
+                    Analyze how implementing structured <strong>Inheritance hierarchies</strong> minimizes source code <strong>Redundancy</strong> while scaling software design projects.
+                </div>
+                <textarea class="student-response-pane" rows="4" placeholder="Enter modular maintenance analysis text..."></textarea>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Grading Award (0-3):</span>
+                            <select class="marks-dropdown score-impact" data-max="3">
+                                <option value="0">0 Marks</option><option value="1">1 Mark</option><option value="2">2 Marks</option><option value="3">3 Marks</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-saq4')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-saq4" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Mapping):</h4>
+                        <p><strong>3 Marks:</strong> Connects parent reuse paradigms to down-stream application expansion, showing how it limits copy-paste bugs.</p>
+                        <p><em>Exemplar Answer:</em> Inheritance lets child classes reuse common variables and functions defined in a shared parent superclass. Instead of copy-pasting the same fields (like ID and name) across multiple distinct entities, the code is declared once in the parent class. Child classes automatically inherit these features, meaning updates or bugs only need to be fixed in a single location, which significantly reduces redundancy and simplifies maintenance.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 15</span>
+                    <span class="marks-badge">3 Marks</span>
+                </div>
+                <div class="question-text">
+                    <div class="interpretation-matrix">
+                        <div class="matrix-panel">
+                            <div class="matrix-panel-title">Target Script Variant A</div>
+<pre style="margin:0; color:#e2e8f0; font-size:0.8rem;">
+class Device:
+    def __init__(self):
+        self.status = "OFF"
+</pre>
+                        </div>
+                        <div class="matrix-panel">
+                            <div class="matrix-panel-title">Target Script Variant B</div>
+<pre style="margin:0; color:#e2e8f0; font-size:0.8rem;">
+class Device:
+    def __init__(self):
+        self.__status = "OFF"
+    def toggle(self, key):
+        if key == "AUTH_SIG":
+            self.__status = "ON"
+</pre>
+                        </div>
+                    </div>
+                    Interpret the behavioral and structural differences between Script Variant A and Script Variant B. Explain how each handles state security and access mechanics.
+                </div>
+                <textarea class="student-response-pane" rows="4" placeholder="Enter target code translation critique..."></textarea>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Grading Award (0-3):</span>
+                            <select class="marks-dropdown score-impact" data-max="3">
+                                <option value="0">0 Marks</option><option value="1">1 Mark</option><option value="2">2 Marks</option><option value="3">3 Marks</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-saq5')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-saq5" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer (Criteria Mapping):</h4>
+                        <p><strong>3 Marks:</strong> Highlights how Python name-mangling secures private data states compared to open public fields.</p>
+                        <p><em>Exemplar Answer:</em> Variant A exposes `status` as a public attribute, meaning any outside script can change it to invalid values without validation. Variant B secures the state using Python's name-mangling syntax via the `__` double underscore prefix. This completely blocks outside scripts from direct access, forcing them to use the `toggle()` method, which validates security tokens before changing the device status.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-code" class="exam-section">
+            <div class="section-title">Phase 4: Advanced Pillar Coding Lab Arena (4 Activities, 40 Marks)</div>
+            <div class="section-instructions">
+                Write fully functional Python source code patterns matching the specified scenario constraints. Every code solution must be long, realistic, define appropriate constructors, implement validation checks that raise a <code>ValueError</code>, and enforce strict OOP boundaries. Each activity is worth ten (10) marks.
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Activity 16: Encapsulation Implementation Challenge</span>
+                    <span class="marks-badge">10 Marks</span>
+                </div>
+                <div class="question-text">
+                    <strong>Scenario Instructions:</strong> Construct a complete Python class blueprint named <code>MedicalPatientProfile</code>. You must enforce strict data shielding constraints. The class must protect the tracking data points listed below:
+                    <ul>
+                        <li><code>__patient_id</code> (String type, must be exactly 7 characters long, otherwise raise ValueError).</li>
+                        <li><code>__systolic_pressure</code> (Integer type, must reside inside the safe bounds of 50 to 250 inclusive, otherwise raise ValueError).</li>
+                        <li><code>__blood_glucose</code> (Float type, must reside inside the safe bounds of 2.0 to 30.0 inclusive, otherwise raise ValueError).</li>
+                    </ul>
+                    Provide a formal 3-parameter constructor initialization block. Implement structural property getter methods for all values. Implement explicit setter methods for health indicators that validate inputs before saving them and raise a <code>ValueError</code> for out-of-bounds metrics.
+                </div>
+                <textarea class="student-response-pane code-editor-area" rows="18" placeholder="# Implement full 25-30 line Python Encapsulation script here..."></textarea>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Grading Evaluation Score (0-10):</span>
+                            <select class="marks-dropdown score-impact" data-max="10">
+                                <option value="0">0 Marks</option><option value="2">2 Marks</option><option value="4">4 Marks</option><option value="6">6 Marks</option><option value="8">8 Marks</option><option value="10">10 Marks</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-code1')"><i class="far fa-eye"></i> Show Code Reference Solution</button>
+                    </div>
+                    <div id="sol-code1" class="sample-answer-vault">
+                        <h4>Syllabus Compliant Python Code Solution Matrix:</h4>
+<pre style="color: #00ff66; background: #000; padding:12px; border-radius:4px; font-size:0.8rem;">
+class MedicalPatientProfile:
+    def __init__(self, patient_id, systolic_pressure, blood_glucose):
+        if not isinstance(patient_id, str) or len(patient_id) != 7:
+            raise ValueError("Patient ID must be a string exactly 7 characters long.")
+        self.__patient_id = patient_id
+        
+        # Route through setters to execute validation checks
+        self.set_systolic_pressure(systolic_pressure)
+        self.set_blood_glucose(blood_glucose)
+
+    def get_patient_id(self):
+        return self.__patient_id
+
+    def get_systolic_pressure(self):
+        return self.__systolic_pressure
+
+    def set_systolic_pressure(self, value):
+        if not isinstance(value, int) or not (50 <= value <= 250):
+            raise ValueError("Systolic pressure must be an integer between 50 and 250.")
+        self.__systolic_pressure = value
+
+    def get_blood_glucose(self):
+        return self.__blood_glucose
+
+    def set_blood_glucose(self, value):
+        if not isinstance(value, (int, float)) or not (2.0 <= value <= 30.0):
+            raise ValueError("Blood glucose must be a float value between 2.0 and 30.0.")
+        self.__blood_glucose = float(value)
+</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Activity 17: Inheritance Constructor Chain Challenge</span>
+                    <span class="marks-badge">10 Marks</span>
+                </div>
+                <div class="question-text">
+                    <strong>Scenario Instructions:</strong> Create a baseline parent superclass configuration named <code>LogisticsAsset</code>. It must track common infrastructure traits: <code>asset_id</code> (String) and <code>base_weight</code> (Float, must be greater than 0.0, otherwise raise ValueError). Provide an initialization configuration block.<br><br>
+                    Next, construct a specialized subclass entity blueprint named <code>RefrigeratedContainer</code> that extends <code>LogisticsAsset</code>. This subclass must define an additional custom internal data variable tracking <code>target_celsius</code> (Float, must reside inside the temperature boundary of -40.0 to 15.0 degrees, otherwise raise ValueError). You must explicitly invoke the parent constructor routine inside the child subclass via <code>super().__init__()</code> to initialize base fields correctly.
+                </div>
+                <textarea class="student-response-pane code-editor-area" rows="18" placeholder="# Implement full parent-child constructor link script here..."></textarea>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Grading Evaluation Score (0-10):</span>
+                            <select class="marks-dropdown score-impact" data-max="10">
+                                <option value="0">0 Marks</option><option value="2">2 Marks</option><option value="4">4 Marks</option><option value="6">6 Marks</option><option value="8">8 Marks</option><option value="10">10 Marks</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-code2')"><i class="far fa-eye"></i> Show Code Reference Solution</button>
+                    </div>
+                    <div id="sol-code2" class="sample-answer-vault">
+                        <h4>Syllabus Compliant Python Code Solution Matrix:</h4>
+<pre style="color: #00ff66; background: #000; padding:12px; border-radius:4px; font-size:0.8rem;">
+class LogisticsAsset:
+    def __init__(self, asset_id, base_weight):
+        if not isinstance(asset_id, str) or asset_id == "":
+            raise ValueError("Asset ID must be a non-empty string value.")
+        if not isinstance(base_weight, (int, float)) or base_weight <= 0.0:
+            raise ValueError("Base weight must be a positive numeric value.")
+        self.asset_id = asset_id
+        self.base_weight = float(base_weight)
+
+class RefrigeratedContainer(LogisticsAsset):
+    def __init__(self, asset_id, base_weight, target_celsius):
+        # Chain constructor initialization to parent class blueprint
+        super().__init__(asset_id, base_weight)
+        
+        if not isinstance(target_celsius, (int, float)) or not (-40.0 <= target_celsius <= 15.0):
+            raise ValueError("Target temperature must reside between -40.0C and +15.0C.")
+        self.target_celsius = float(target_celsius)
+</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Activity 18: Abstraction & Contract Mapping Challenge</span>
+                    <span class="marks-badge">10 Marks</span>
+                </div>
+                <div class="question-text">
+                    <strong>Scenario Instructions:</strong> Import the necessary native structural interfaces from Python's <code>abc</code> standard module library module to build an un-instantiable base blueprint abstraction class framework named <code>CryptographicToken</code>. 
+                    The class must feature a standard identifier string parameter variable named <code>token_id</code> defined within its baseline constructor initialization block. Declare an abstract method interface contract block named <code>generate_signature()</code> containing zero internal code statements (use <code>pass</code>). 
+                    Finally, create a valid concrete subclass named <code>RSAHardwareToken</code> that inherits from <code>CryptographicToken</code> and provides a valid functional method override implementation for the <code>generate_signature()</code> method, returning a formatted string token value.
+                </div>
+                <textarea class="student-response-pane code-editor-area" rows="18" placeholder="# Implement full abc abstract infrastructure layout here..."></textarea>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Grading Evaluation Score (0-10):</span>
+                            <select class="marks-dropdown score-impact" data-max="10">
+                                <option value="0">0 Marks</option><option value="2">2 Marks</option><option value="4">4 Marks</option><option value="6">6 Marks</option><option value="8">8 Marks</option><option value="10">10 Marks</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-code3')"><i class="far fa-eye"></i> Show Code Reference Solution</button>
+                    </div>
+                    <div id="sol-code3" class="sample-answer-vault">
+                        <h4>Syllabus Compliant Python Code Solution Matrix:</h4>
+<pre style="color: #00ff66; background: #000; padding:12px; border-radius:4px; font-size:0.8rem;">
+from abc import ABC, abstractmethod
+
+class CryptographicToken(ABC):
+    def __init__(self, token_id):
+        self.token_id = token_id
+
+    @abstractmethod
+    def generate_signature(self):
+        pass
+
+class RSAHardwareToken(CryptographicToken):
+    def __init__(self, token_id, key_length):
+        super().__init__(token_id)
+        if key_length not in [2048, 4096]:
+            raise ValueError("Secure keys must measure exactly 2048 or 4096 bits.")
+        self.key_length = key_length
+
+    def generate_signature(self):
+        return f"RSA-SIG-[{self.token_id}]-VALIDATED-KEYLEN-{self.key_length}"
+</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Activity 19: Structural Blueprint Translation Challenge</span>
+                    <span class="marks-badge">10 Marks</span>
+                </div>
+                <div class="question-text">
+                    <strong>Scenario Instructions:</strong> Translate the formal vector flowchart diagram visible below into a clean object-oriented Python implementation.
+                    
+                    <div class="diagram-canvas">
+                        <svg class="diagram-svg" width="500" height="280" viewBox="0 0 500 280">
+                            <rect x="180" y="10" width="140" height="40" rx="8" fill="#1e1e2f" stroke="#00f0ff" stroke-width="2"/>
+                            <text x="250" y="34" fill="#fff" font-family="sans-serif" font-size="11" text-anchor="middle">__init__(user, hours)</text>
+                            
+                            <line x1="250" y1="50" x2="250" y2="80" stroke="#9d4edd" stroke-width="2" marker-end="url(#arrow)"/>
+                            
+                            <polygon points="250,80 340,115 250,150 160,115" fill="#1e1e2f" stroke="#9d4edd" stroke-width="2"/>
+                            <text x="250" y="119" fill="#fff" font-family="sans-serif" font-size="10" text-anchor="middle">Is hours &lt; 0 or &gt; 168?</text>
+                            
+                            <line x1="160" y1="115" x2="100" y2="115" stroke="#10b981" stroke-width="2"/>
+                            <line x1="100" y1="115" x2="100" y2="170" stroke="#10b981" stroke-width="2" marker-end="url(#arrow)"/>
+                            <text x="130" y="105" fill="#10b981" font-family="sans-serif" font-size="10">Yes (True)</text>
+                            
+                            <line x1="250" y1="150" x2="250" y2="190" stroke="#e11d48" stroke-width="2" marker-end="url(#arrow)"/>
+                            <text x="260" y="170" fill="#e11d48" font-family="sans-serif" font-size="10">No (False)</text>
+                            
+                            <rect x="20" y="170" width="160" height="40" fill="#31111d" stroke="#e11d48" stroke-width="1"/>
+                            <text x="100" y="194" fill="#ff8fa3" font-family="sans-serif" font-size="10" text-anchor="middle">raise ValueError("Invalid Hours")</text>
+                            
+                            <rect x="160" y="190" width="180" height="40" fill="#112921" stroke="#10b981" stroke-width="1"/>
+                            <text x="250" y="214" fill="#a7f3d0" font-family="sans-serif" font-size="10" text-anchor="middle">self.__hours = hours</text>
+                            
+                            <defs>
+                                <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#9d4edd"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+
+                    <strong>Implementation Rules:</strong> Implement a class named <code>WorkScheduleTracker</code>. It must handle two private internal parameters: <code>__username</code> (String) and <code>__hours_allocated</code> (Integer). The class constructor must follow the precise evaluation pathways mapped out in the chart: if the hours parameter contains an invalid out-of-bounds metrics configuration (less than 0 or greater than 168 hours within a single week calendar limit), it must trigger a <code>ValueError</code> exception immediately. Provide full getter and setter interface property paths to manage data access.
+                </div>
+                <textarea class="student-response-pane code-editor-area" rows="18" placeholder="# Implement full flowchart-to-code structural script mapping here..."></textarea>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Grading Evaluation Score (0-10):</span>
+                            <select class="marks-dropdown score-impact" data-max="10">
+                                <option value="0">0 Marks</option><option value="2">2 Marks</option><option value="4">4 Marks</option><option value="6">6 Marks</option><option value="8">8 Marks</option><option value="10">10 Marks</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-code4')"><i class="far fa-eye"></i> Show Code Reference Solution</button>
+                    </div>
+                    <div id="sol-code4" class="sample-answer-vault">
+                        <h4>Syllabus Compliant Python Code Solution Matrix:</h4>
+<pre style="color: #00ff66; background: #000; padding:12px; border-radius:4px; font-size:0.8rem;">
+class WorkScheduleTracker:
+    def __init__(self, username, hours_allocated):
+        if not isinstance(username, str) or username == "":
+            raise ValueError("Username must be a valid non-empty string sequence.")
+        self.__username = username
+        
+        # Invoke setter implementation to execute flowchart range checks
+        self.set_hours_allocated(hours_allocated)
+
+    def get_username(self):
+        return self.__username
+
+    def get_hours_allocated(self):
+        return self.__hours_allocated
+
+    def set_hours_allocated(self, hours):
+        # Maps directly to the flowchart decision diamond validation pathway
+        if not isinstance(hours, int) or hours < 0 or hours > 168:
+            raise ValueError("Invalid Hours: Schedule boundary metrics must reside within 0-168 range.")
+        self.__hours_allocated = hours
+</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-diagrams" class="exam-section">
+            <div class="section-title">Phase 5: Unified Modeling Schemas & Architectural Analysis (4 Questions, 15 Marks)</div>
+            <div class="section-instructions">
+                Examine the structural software layout definitions rendered in the diagrams below, then answer the questions that follow.
+            </div>
+
+            <div class="diagram-canvas" style="flex-direction: column; gap: 20px;">
+                <div style="font-weight: bold; font-family: sans-serif; font-size: 12px; color: #0a0b10;">SCHEMA MAP Alpha: Object-Oriented Class Hierarchy Blueprint</div>
+                <svg width="460" height="150" viewBox="0 0 460 150" style="background:#f8f9fa; border:1px solid #cbd5e1; border-radius:4px;">
+                    <rect x="160" y="10" width="140" height="50" fill="#fff" stroke="#000" stroke-width="1.5"/>
+                    <text x="230" y="28" font-family="monospace" font-size="12" font-weight="bold" text-anchor="middle">PaymentGateway</text>
+                    <text x="166" y="44" font-family="monospace" font-size="10">+ gateway_id : str</text>
+                    
+                    <polygon points="230,60 225,72 235,72" fill="none" stroke="#000" stroke-width="1.5"/>
+                    <line x1="230" y1="72" x2="230" y2="90" stroke="#000" stroke-width="1.5"/>
+                    <line x1="100" y1="90" x2="360" y2="90" stroke="#000" stroke-width="1.5"/>
+                    
+                    <line x1="100" y1="90" x2="100" y2="110" stroke="#000" stroke-width="1.5"/>
+                    <line x1="360" y1="90" x2="360" y2="110" stroke="#000" stroke-width="1.5"/>
+                    
+                    <rect x="30" y="110" width="140" height="35" fill="#fff" stroke="#000" stroke-width="1.5"/>
+                    <text x="100" y="125" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">StripeRouter</text>
+                    <text x="36" y="138" font-family="monospace" font-size="9">+ process_charge()</text>
+                    
+                    <rect x="290" y="110" width="140" height="35" fill="#fff" stroke="#000" stroke-width="1.5"/>
+                    <text x="360" y="125" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">PayPalBridge</text>
+                    <text x="296" y="138" font-family="monospace" font-size="9">+ process_charge()</text>
+                </svg>
+
+                <div style="font-weight: bold; font-family: sans-serif; font-size: 12px; color: #0a0b10;">SCHEMA MAP Beta: Database Entity Relation Model</div>
+                <svg width="460" height="100" viewBox="0 0 460 100" style="background:#f8f9fa; border:1px solid #cbd5e1; border-radius:4px;">
+                    <rect x="20" y="20" width="150" height="60" fill="#fff" stroke="#000" stroke-width="1.5"/>
+                    <text x="95" y="36" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">CUSTOMER_ACCOUNT</text>
+                    <text x="26" y="52" font-family="sans-serif" font-size="10" fill="#7209b7">[PK] account_uid</text>
+                    <text x="26" y="68" font-family="sans-serif" font-size="10">customer_name</text>
+                    
+                    <line x1="170" y1="50" x2="290" y2="50" stroke="#000" stroke-width="1.5"/>
+                    <line x1="180" y1="42" x2="180" y2="58" stroke="#000" stroke-width="1.5"/>
+                    <path d="M 275 40 L 290 50 L 275 60" fill="none" stroke="#000" stroke-width="1.5"/>
+                    
+                    <rect x="290" y="20" width="150" height="60" fill="#fff" stroke="#000" stroke-width="1.5"/>
+                    <text x="365" y="36" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">INVOICE_RECORD</text>
+                    <text x="296" y="52" font-family="sans-serif" font-size="10" fill="#7209b7">[PK] invoice_id</text>
+                    <text x="296" y="68" font-family="sans-serif" font-size="10" fill="#00f0ff">[FK] account_uid</text>
+                </svg>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 20</span>
+                    <span class="marks-badge">3 Marks</span>
+                </div>
+                <div class="question-text">
+                    Analyze SCHEMA MAP Alpha. Identify the specific relationship model shared between <code>PaymentGateway</code> and its sub-components, and detail how this specific link supports code reuse.
+                </div>
+                <textarea class="student-response-pane" rows="3"></textarea>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Grading Award (0-3):</span>
+                            <select class="marks-dropdown score-impact" data-max="3">
+                                <option value="0">0 Marks</option><option value="1">1 Mark</option><option value="2">2 Marks</option><option value="3">3 Marks</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-diag1')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-diag1" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer:</h4>
+                        <p>The relationship is **Generalization / Inheritance** (indicated by the solid line and hollow triangle arrow pointing up to the parent). This layout maximizes code reuse because shared core properties, like `gateway_id`, are defined once in the parent class (`PaymentGateway`), allowing subclasses to automatically inherit them without duplicating code.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 21</span>
+                    <span class="marks-badge">4 Marks</span>
+                </div>
+                <div class="question-text">
+                    Interpret the precise entity structural mechanics of SCHEMA MAP Beta. Identify the Primary Key mapping anchors, explain how the Foreign Key establishes data integrity, and evaluate the numerical cardinality relationship between the tables.
+                </div>
+                <textarea class="student-response-pane" rows="3"></textarea>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Grading Award (0-4):</span>
+                            <select class="marks-dropdown score-impact" data-max="4">
+                                <option value="0">0 Marks</option><option value="1">1 Mark</option><option value="2">2 Marks</option><option value="3">3 Marks</option><option value="4">4 Marks</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-diag2')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-diag2" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer:</h4>
+                        <p>The primary keys are `account_uid` for Customer Account and `invoice_id` for Invoice Record, which uniquely identify each row. The column `account_uid` acts as a Foreign Key in the Invoice table, linking back to the Customer table. The line shows a **One-to-Many (1..*)** relationship, meaning one customer can link to multiple invoices, while each invoice maps back to exactly one customer.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 22</span>
+                    <span class="marks-badge">4 Marks</span>
+                </div>
+                <div class="question-text">
+                    Compare the fundamental architectural purposes of an Entity-Relationship Diagram (ERD) with a standard UML Class Diagram. Highlight their differences in database validation, system execution boundaries, and storage schemas.
+                </div>
+                <textarea class="student-response-pane" rows="3"></textarea>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Grading Award (0-4):</span>
+                            <select class="marks-dropdown score-impact" data-max="4">
+                                <option value="0">0 Marks</option><option value="1">1 Mark</option><option value="2">2 Marks</option><option value="3">3 Marks</option><option value="4">4 Marks</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-diag3')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-diag3" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer:</h4>
+                        <p>An ERD models **static persistent data relationships** inside relational databases, focusing on tables, primary keys, foreign keys, and referential integrity constraints. A UML class diagram models **active object orientation structures in runtime memory**, capturing encapsulated state attributes, operational methods, access visibility indicators, and inheritance hierarchies.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-meta-row">
+                    <span class="question-number">Question 23</span>
+                    <span class="marks-badge">4 Marks</span>
+                </div>
+                <div class="question-text">
+                    If an engineer realizes that the method call signature <code>process_charge()</code> on SCHEMA MAP Alpha behaves differently depending on whether it is routed through the <code>StripeRouter</code> instance or the <code>PayPalBridge</code> instance, explain how this behavior demonstrates polymorphism.
+                </div>
+                <textarea class="student-response-pane" rows="3"></textarea>
+                <div class="teacher-grading-hub">
+                    <div class="grading-row">
+                        <div class="allocation-control">
+                            <span class="allocation-label">Grading Award (0-4):</span>
+                            <select class="marks-dropdown score-impact" data-max="4">
+                                <option value="0">0 Marks</option><option value="1">1 Mark</option><option value="2">2 Marks</option><option value="3">3 Marks</option><option value="4">4 Marks</option>
+                            </select>
+                        </div>
+                        <button class="solution-toggle-btn" onclick="toggleSolution('sol-diag4')"><i class="far fa-eye"></i> Show Sample Answer</button>
+                    </div>
+                    <div id="sol-diag4" class="sample-answer-vault">
+                        <h4>Syllabus Sample Answer:</h4>
+                        <p>This demonstrates polymorphism because the same method name (`process_charge()`) is invoked uniformly across different objects. At runtime, the execution engine uses dynamic binding to detect the specific subclass type and execute its unique version of the method, allowing different backend services to be used interchangeably through a shared parent interface.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-testing" class="exam-section">
+            <div class="section-title">Phase 6: Comprehensive Testing Methodologies & Edge Cases (3 Tables, 15 Marks)</div>
+            <div class="section-instructions">
+                Complete the complex testing data charts below. Analyze the provided target criteria variables and deduce the missing expected system behaviors or data ranges. Leave unfilled cells completely blank where student input is required.
+            </div>
+
+            <h3 style="color: var(--text-main); font-size: 1rem; margin-bottom: 8px;"><i class="fas fa-table"></i> Activity 24: Black Box Functional Testing Matrix (Boundary Metrics)</h3>
+            <div class="section-instructions" style="margin-bottom: 12px;">
+                Target Component: <code>verify_user_age_limit(age_input)</code> where valid bounds require an integer between 18 and 65 inclusive.
+            </div>
+            <table class="annoying-exam-table">
+                <thead>
+                    <tr><th>Test Case ID</th><th>Functional Input Description</th><th>Test Input Data</th><th>Expected Output State Result</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>TC-BB-01</td><td>Lower boundary extreme negative constraint test</td><td>17</td><td>Returns False / Triggers OutOfRange Exception</td></tr>
+                    <tr><td>TC-BB-02</td><td>Lower edge boundary pass validation validation</td><td><input type="text" placeholder="[Fill input data]"></td><td>Returns True / Pass status confirmed</td></tr>
+                    <tr><td>TC-BB-03</td><td>Mid-range normal operation test case</td><td>35</td><td><input type="text" placeholder="[Fill expected system behavior]"></td></tr>
+                    <tr><td>TC-BB-04</td><td>Upper edge boundary pass validation validation</td><td>65</td><td>Returns True / Pass status confirmed</td></tr>
+                    <tr><td>TC-BB-05</td><td>Upper boundary extreme overflow condition check</td><td><input type="text" placeholder="[Fill input data]"></td><td>Returns False / Triggers OutOfRange Exception</td></tr>
+                </tbody>
+            </table>
+            <div class="teacher-grading-hub">
+                <div class="grading-row">
+                    <div class="allocation-control">
+                        <span class="allocation-label">Evaluation Allocation (0-5):</span>
+                        <select class="marks-dropdown score-impact" data-max="5">
+                            <option value="0">0 Marks</option><option value="1">1 Mark</option><option value="2">2 Marks</option><option value="3">3 Marks</option><option value="4">4 Marks</option><option value="5">5 Marks</option>
+                        </select>
+                    </div>
+                    <button class="solution-toggle-btn" onclick="toggleSolution('sol-test1')"><i class="far fa-eye"></i> Show Key Matrix</button>
+                </div>
+                <div id="sol-test1" class="sample-answer-vault">
+                    <h4>Black Box Answers:</h4>
+                    <p>• TC-BB-02 Input: <strong>18</strong> (the precise minimum boundary passing criteria integer value)<br>
+                    • TC-BB-03 Output: <strong>Returns True / Pass status confirmed</strong> (valid standard structural load value)<br>
+                    • TC-BB-05 Input: <strong>66</strong> (or any value higher than 65, verifying the upper failing exception range)</p>
+                </div>
+            </div>
+
+            <h3 style="color: var(--text-main); font-size: 1rem; margin-top: 32px; margin-bottom: 8px;"><i class="fas fa-table"></i> Activity 25: White Box Code Path Execution Testing Matrix (Branch Logic Coverage)</h3>
+            <div class="section-instructions" style="margin-bottom: 12px;">
+                Target Logic Block: <code>if is_vip == True: apply_discount(0.20) elif account_balance &gt; 500: apply_discount(0.05) else: charge_full_rate()</code>
+            </div>
+            <table class="annoying-exam-table">
+                <thead>
+                    <tr><th>Test Case ID</th><th>Target Logical Path Description</th><th>Internal State Variables</th><th>Expected Executed Statement Path</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>TC-WB-01</td><td>Primary If block true pathway tracking</td><td>is_vip = True, balance = 10.00</td><td>Executes line 1: apply_discount(0.20)</td></tr>
+                    <tr><td>TC-WB-02</td><td>Elif conditional routing check line</td><td><input type="text" placeholder="[Fill internal variables state]"></td><td>Executes line 2: apply_discount(0.05)</td></tr>
+                    <tr><td>TC-WB-03</td><td>Else fallback execution branch coverage</td><td>is_vip = False, balance = 120.00</td><td><input type="text" placeholder="[Fill target line execution trace]"></td></tr>
+                </tbody>
+            </table>
+            <div class="teacher-grading-hub">
+                <div class="grading-row">
+                    <div class="allocation-control">
+                        <span class="allocation-label">Evaluation Allocation (0-5):</span>
+                        <select class="marks-dropdown score-impact" data-max="5">
+                            <option value="0">0 Marks</option><option value="1">1 Mark</option><option value="2">2 Marks</option><option value="3">3 Marks</option><option value="4">4 Marks</option><option value="5">5 Marks</option>
+                        </select>
+                    </div>
+                    <button class="solution-toggle-btn" onclick="toggleSolution('sol-test2')"><i class="far fa-eye"></i> Show Key Matrix</button>
+                </div>
+                <div id="sol-test2" class="sample-answer-vault">
+                    <h4>White Box Answers:</h4>
+                    <p>• TC-WB-02 Internal State Variables: <strong>is_vip = False, balance = 501.00</strong> (forces code to fail the first block but satisfy the elif range test)<br>
+                    • TC-WB-03 Executed Path: <strong>Executes line 3: charge_full_rate()</strong> (fallback path executed when all conditions evaluate to False)</p>
+                </div>
+            </div>
+
+            <h3 style="color: var(--text-main); font-size: 1rem; margin-top: 32px; margin-bottom: 8px;"><i class="fas fa-table"></i> Activity 26: Grey Box Schema Integrity Testing Matrix (Database Pointer States)</h3>
+            <div class="section-instructions" style="margin-bottom: 12px;">
+                Target Scope: Verifying referential constraints and system pointer safety across runtime class dictionaries and database tables.
+            </div>
+            <table class="annoying-exam-table">
+                <thead>
+                    <tr><th>Test Case ID</th><th>Architectural Integrity Focus Area</th><th>Data Conditions Evaluated</th><th>System Integrity Validation Expected State</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>TC-GB-01</td><td>Foreign Key Referential Constraint Target Verification</td><td>Delete a record row entry inside master table while active child links exist</td><td>Blocks operation execution / Triggers foreign key exception loop</td></tr>
+                    <tr><td>TC-GB-02</td><td>Orphan Pointer Prevention Target Check</td><td><input type="text" placeholder="[Fill structural configuration text]"></td><td>Child components cascade delete instantly automatically</td></tr>
+                    <tr><td>TC-GB-03</td><td>Encapsulated State Mutation Validation</td><td>Inject duplicate string ID as Primary Key unique code parameter</td><td><input type="text" placeholder="[Fill expected validation response mapping]"></td></tr>
+                </tbody>
+            </table>
+            <div class="teacher-grading-hub">
+                <div class="grading-row">
+                    <div class="allocation-control">
+                        <span class="allocation-label">Evaluation Allocation (0-5):</span>
+                        <select class="marks-dropdown score-impact" data-max="5">
+                            <option value="0">0 Marks</option><option value="1">1 Mark</option><option value="2">2 Marks</option><option value="3">3 Marks</option><option value="4">4 Marks</option><option value="5">5 Marks</option>
+                        </select>
+                    </div>
+                    <button class="solution-toggle-btn" onclick="toggleSolution('sol-test3')"><i class="far fa-eye"></i> Show Key Matrix</button>
+                </div>
+                <div id="sol-test3" class="sample-answer-vault">
+                    <h4>Grey Box Answers:</h4>
+                    <p>• TC-GB-02 Data Conditions Evaluated: <strong>Terminate parent owner instance when strict Composition lifecycle limits apply</strong><br>
+                    • TC-GB-03 Expected State: <strong>Database engine blocks transaction insert and returns a unique key violation warning</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer-block"></div>
+
+        <footer class="exam-actions-bar">
+            <button class="submit-exam-btn" onclick="processGradesCalculation()"><i class="fas fa-calculator"></i> Calculate Scores Matrix</button>
+        </footer>
+    </main>
+
+    <script>
+        // System UI Visibility Toggler Function Engine
+        function toggleSolution(elementId) {
+            const vaultItem = document.getElementById(elementId);
+            if (vaultItem.style.display === "block") {
+                vaultItem.style.display = "none";
+            } else {
+                vaultItem.style.display = "block";
+            }
+        }
+
+        // Live Marks Calculator Scoring Engine Automation Script loop logic
+        function processGradesCalculation() {
+            let totalEarnedMarks = 0;
+            const scoringSelectors = document.querySelectorAll('.score-impact');
+            
+            scoringSelectors.forEach(selector => {
+                totalEarnedMarks += parseInt(selector.value || 0, 10);
+            });
+
+            // Update user scoreboard text display nodes safely
+            const scoreDisplayBox = document.getElementById('score-display');
+            scoreDisplayBox.textContent = totalEarnedMarks + " / 100";
+            
+            // Provide localized user operational feedback loop alerts
+            alert("Grading metrics evaluation complete.\nTotal evaluated system grade calculated as: " + totalEarnedMarks + " out of 100 maximum scaled marks.");
+        }
+
+        // Handle page scroll activation adjustments on side menus dynamically
+        window.addEventListener('DOMContentLoaded', () => {
+            const sideNavAnchors = document.querySelectorAll('.nav-item a');
+            
+            sideNavAnchors.forEach(anchor => {
+                anchor.addEventListener('click', function() {
+                    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                    this.parentElement.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

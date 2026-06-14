@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 1: Vocabulary Matching Arena</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Phase-Specific Extensions to compliment styles.css */
+        .matching-arena {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-top: 1.5rem;
+        }
+        .terms-column, .definitions-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .matching-pair {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px dashed var(--glass-border);
+            border-radius: 14px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+        .term-label {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .drop-zone {
+            min-height: 80px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            transition: all 0.2s ease;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .drop-zone.drag-over {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 242, 254, 0.05);
+        }
+        .drag-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 1rem;
+            color: var(--text-primary);
+            cursor: grab;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            user-select: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            width: 100%;
+        }
+        .drag-card:active {
+            cursor: grabbing;
+        }
+        .drag-card.dragging {
+            opacity: 0.4;
+            transform: scale(0.98);
+        }
+        /* State Indicators post-submission */
+        .pair-correct {
+            border: 1px solid rgba(16, 185, 129, 0.4) !important;
+            background: rgba(16, 185, 129, 0.02) !important;
+        }
+        .pair-correct .term-label {
+            color: var(--status-complete);
+        }
+        .pair-incorrect {
+            border: 1px solid rgba(239, 68, 68, 0.4) !important;
+            background: rgba(239, 68, 68, 0.02) !important;
+        }
+        .pair-incorrect .term-label {
+            color: #ef4444;
+        }
+        .action-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+        }
+        .score-summary-badge {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-code-branch glowing-icon"></i>
+            <span>SWE Engine</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+            <li class="active"><a href="definitions.html"><i class="fa-solid fa-book"></i> 1. Definitions</a></li>
+            <li><a href="mcq.html"><i class="fa-solid fa-list-check"></i> 2. MCQs</a></li>
+            <li><a href="saq.html"><i class="fa-solid fa-pen-to-square"></i> 3. Short Answer</a></li>
+            <li><a href="code.html"><i class="fa-solid fa-terminal"></i> 4. Code Practical</a></li>
+            <li><a href="erd.html"><i class="fa-solid fa-diagram-project"></i> 5. Class & ERDs</a></li>
+            <li><a href="test.html"><i class="fa-solid fa-vial"></i> 6. Testing Matrices</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <button id="reset-btn" class="btn-secondary"><i class="fa-solid fa-rotate-right"></i> Reset Progress</button>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        
+        <header class="glass-panel glowing-border header-panel">
+            <h1>Phase 1: Vocabulary Recall Arena</h1>
+            <p>Drag the randomized technical definition cards from the right column and drop them next to their matching architectural terms in the left column. Submit the layout to log your validation score.</p>
+        </header>
+
+        <section class="glass-panel">
+            <h2><i class="fa-solid fa-shuffle"></i> Core Architectural Component Matrix</h2>
+            
+            <div class="matching-arena">
+                <div class="terms-column" id="terms-anchor">
+                    </div>
+
+                <div class="definitions-column" id="definitions-pool">
+                    </div>
+            </div>
+
+            <div class="action-banner">
+                <div id="score-readout" class="score-summary-badge"></div>
+                <div class="cta-wrapper" style="margin-top: 0;">
+                    <button id="submit-phase-btn" class="btn-primary glowing-btn">Submit Architecture Schema <i class="fa-solid fa-square-check"></i></button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Comprehensive definitions database covering all uploaded document requirements
+            const vocabularyDataset = [
+                { id: "v1", term: "Encapsulation", definition: "Bundling data attributes and operations inside a class while restricting raw direct access to protect data integrity." },
+                { id: "v2", term: "Abstraction", definition: "Hiding underlying micro implementation complexity, allowing users to focus purely on what an entity does rather than how." },
+                { id: "v3", term: "Inheritance", definition: "A structural design relationship enabling a specialized subclass to automatically inherit features from a generalized parent class." },
+                { id: "v4", term: "Polymorphism", definition: "The capacity for separate object structures to implement identical method interfaces while rendering distinct individual behaviors." },
+                { id: "v5", term: "Method Overriding", definition: "A specialized child subclass replacing an inherited superclass method block to provide its own dynamic runtime execution." },
+                { id: "v6", term: "Method Overloading", definition: "Defining multiple methods inside the same class with identical names but differing argument constraints handled at compile-time." },
+                { id: "v7", term: "Dynamic Binding", definition: "The runtime computational loop decision choosing which specific method block to execute based on active object references." },
+                { id: "v8", term: "Static Binding", definition: "Resolving method call addresses early during program compilation based strictly on declared class types." },
+                { id: "v9", term: "Constructor", definition: "A magical life-cycle method invoked automatically upon object instantiation to allocate memory properties." },
+                { id: "v10", term: "The self Keyword", definition: "An explicit positional placeholder mapping operations directly onto a specific allocated tracking instance box in memory." },
+                { id: "v11", term: "Name Mangling", definition: "The automated syntax trick where double-underscore private markers are transformed to protect private data fields." },
+                { id: "v12", term: "Abstract Base Class", definition: "A non-instantiable class blueprint designed entirely to enforce rigid interface structural definitions down a hierarchy." },
+                { id: "v13", term: "Interface", definition: "A structural contract specifying exact method templates an implementing class must fully provide." },
+                { id: "v14", term: "Composition", definition: "A strong structural whole-part relationship where child lifecycles are strictly bound to the parent container's existence." },
+                { id: "v15", term: "Aggregation", definition: "A weak structural association relationship where part objects can safely survive independently of the collection container." },
+                { id: "v16", term: "Dependency", definition: "A temporary tracking association where a method references an external class interface parameter during execution." },
+                { id: "v17", term: "Association", definition: "A generic persistent reference link showing that one class retains long-term memory access to an independent class instance." },
+                { id: "v18", term: "Primary Key", definition: "An absolute unique record identifier constraint preventing row redundancy inside a structural relational table." },
+                { id: "v19", term: "Foreign Key", definition: "A cross-table pointer reference attribute linking tables together to manage referential data integrity." },
+                { id: "v20", term: "Composite Key", definition: "Combining multiple relational data attributes together to forge a single unique record identifier." },
+                { id: "v21", term: "Cardinality", definition: "The explicit numerical bounds dictating how many instances of Entity A can connect with Entity B." },
+                { id: "v22", term: "Balanced Generalization", definition: "The optimization ideal where shared traits sit high up in a superclass while unique traits reside in child blocks." },
+                { id: "v23", term: "Under-Generalization", definition: "Failing to build a shared superclass parent, leading to messy, duplicate code blocks across adjacent siblings." },
+                { id: "v24", term: "Over-Generalization", definition: "Forcing an irrelevant attribute up into a shared superclass that does not logically apply to all its subclasses." },
+                { id: "v25", term: "Task Definition", definition: "The formal early gathering of client specifications and operational boundaries that guides the design architecture." },
+                { id: "v26", term: "Top-Down Approach", definition: "Decomposing a high-level system overview down into increasingly small, highly focused sub-components." },
+                { id: "v27", term: "Bottom-Up Approach", definition: "Building base unit primitives first, then integrating them to form complex coordinated system engines." },
+                { id: "v28", term: "Quality Assurance", definition: "A systematic structural verification lifecycle ensuring software meets core guidelines and code is defect-free." },
+                { id: "v29", term: "Code Review", definition: "A peer-driven codebase verification audit verifying encapsulation security, code readability, and architecture standards." },
+                { id: "v30", term: "Unit Testing", definition: "Isolating and executing tests against independent micro-methods or classes in total separation from outside frameworks." },
+                { id: "v31", term: "Integration Testing", definition: "Verifying the collaborative message-passing contracts across distinct multi-object composition interfaces." },
+                { id: "v32", term: "Regression Testing", definition: "Running complete previous test inventories after injecting patches to verify legacy functionality didn't break." },
+                { id: "v33", term: "Black Box Testing", definition: "Functional correctness validation performed exclusively through input-output vectors with zero internal structural visibility." },
+                { id: "v34", term: "White Box Testing", definition: "Structural validation mapped directly against code loops, conditions, and logical branches to maximize code coverage." },
+                { id: "v35", term: "Grey Box Testing", definition: "A hybrid integration technique utilizing partial internal layout design knowledge to trace system states and interfaces." },
+                { id: "v36", term: "Edge Case", definition: "An extreme data testing input parameter boundary mapping minimum, maximum, or invalid threshold points." },
+                { id: "v37", term: "Cohesion", definition: "The degree to which tasks within a single module or class are closely related and functionally focused." },
+                { id: "v38", term: "Coupling", definition: "The level of interdependence and connectivity between separate modules or software components." },
+                { id: "v39", term: "CI/CD Pipeline", definition: "Automated integration deployment loops that pull, build, environment-provision, and run test scripts upon repository commits." },
+                { id: "v40", term: "Message Passing", definition: "The object-oriented process of invoking methods on separate tracking instances to transition shared internal states." }
+            ];
+
+            // Setup App State Variables
+            let currentState = JSON.parse(localStorage.getItem('oop_exam_state')) || {
+                currentPhase: 1, isCompleted: false, scores: {}
+            };
+
+            const termsContainer = document.getElementById('terms-anchor');
+            const definitionsContainer = document.getElementById('definitions-pool');
+
+            // Render matching lane infrastructure
+            const initMatrix = () => {
+                // Keep left column alphabetical to make it scannable
+                const sortedVocabulary = [...vocabularyDataset].sort((a, b) => a.term.localeCompare(b.term));
+                // Randomize right column cards to create the game challenge
+                const randomizedDefinitions = [...vocabularyDataset].sort(() => Math.random() - 0.5);
+
+                sortedVocabulary.forEach(item => {
+                    const pairWrapper = document.createElement('div');
+                    pairWrapper.className = 'matching-pair';
+                    pairWrapper.setAttribute('data-correct-id', item.id);
+
+                    pairWrapper.innerHTML = `
+                        <div class="term-label"><i class="fa-solid fa-bookmark text-accent"></i> ${item.term}</div>
+                        <div class="drop-zone" data-assigned-id="">Drop matching blueprint card here</div>
+                    `;
+                    termsContainer.appendChild(pairWrapper);
+                });
+
+                randomizedDefinitions.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'drag-card';
+                    card.draggable = true;
+                    card.id = `card-${item.id}`;
+                    card.setAttribute('data-id', item.id);
+                    card.innerText = item.definition;
+                    definitionsContainer.appendChild(card);
+                });
+
+                attachDragAndDropMechanics();
+            };
+
+            const attachDragAndDropMechanics = () => {
+                const cards = document.querySelectorAll('.drag-card');
+                const zones = document.querySelectorAll('.drop-zone');
+
+                cards.forEach(card => {
+                    card.addEventListener('dragstart', (e) => {
+                        card.classList.add('dragging');
+                        e.dataTransfer.setData('text/plain', card.id);
+                    });
+                    card.addEventListener('dragend', () => card.classList.remove('dragging'));
+                });
+
+                zones.forEach(zone => {
+                    zone.addEventListener('dragover', (e) => e.preventDefault());
+                    zone.addEventListener('dragenter', () => zone.classList.add('drag-over'));
+                    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+                    
+                    zone.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        zone.classList.remove('drag-over');
+                        const cardId = e.dataTransfer.getData('text/plain');
+                        const card = document.getElementById(cardId);
+                        
+                        if (!card) return;
+
+                        // Check if zone already holds a card
+                        const incomingCardId = card.getAttribute('data-id');
+                        const containerHasCard = zone.querySelector('.drag-card');
+
+                        if (containerHasCard) {
+                            // Send existing card back to pool
+                            definitionsContainer.appendChild(containerHasCard);
+                        }
+
+                        zone.appendChild(card);
+                        zone.setAttribute('data-assigned-id', incomingCardId);
+                        zone.style.color = "transparent"; // Hide instructional text
+                    });
+                });
+
+                // Re-allow dragging cards back out to the main container pool
+                definitionsContainer.addEventListener('dragover', (e) => e.preventDefault());
+                definitionsContainer.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const cardId = e.dataTransfer.getData('text/plain');
+                    const card = document.getElementById(cardId);
+                    if (card) {
+                        // Find the zone the card left behind and restore its placeholder text
+                        const originalZone = Array.from(zones).find(z => z.contains(card));
+                        if(originalZone){
+                            originalZone.setAttribute('data-assigned-id', "");
+                            originalZone.style.color = "var(--text-muted)";
+                        }
+                        definitionsContainer.appendChild(card);
+                    }
+                });
+            };
+
+            // Grade the matched pairs and save progress
+            document.getElementById('submit-phase-btn').addEventListener('click', () => {
+                const pairs = document.querySelectorAll('.matching-pair');
+                let correctCount = 0;
+                let cardsUnassigned = false;
+
+                pairs.forEach(pair => {
+                    const zone = pair.querySelector('.drop-zone');
+                    const correctId = pair.getAttribute('data-correct-id');
+                    const assignedId = zone.getAttribute('data-assigned-id');
+
+                    if (!assignedId) {
+                        cardsUnassigned = true;
+                    }
+
+                    if (correctId === assignedId) {
+                        correctCount++;
+                        pair.className = 'matching-pair pair-correct';
+                        // Lock down cards so inputs can't be modified post-submission
+                        const card = zone.querySelector('.drag-card');
+                        if (card) card.draggable = false;
+                    } else {
+                        pair.className = 'matching-pair pair-incorrect';
+                    }
+                });
+
+                if (cardsUnassigned && !confirm("Warning: You have left unassigned definition gaps. Submit anyway?")) {
+                    return;
+                }
+
+                // Render metrics display banner
+                const scoreReadout = document.getElementById('score-readout');
+                scoreReadout.innerHTML = `<i class="fa-solid fa-graduation-cap"></i> Evaluated Metric Score: ${correctCount} / 40`;
+
+                // Update unified state schema configuration
+                currentState.scores.definitions = {
+                    score: correctCount,
+                    total: 40,
+                    status: 'Complete'
+                };
+
+                // Advance system checkpoint tracking
+                if (currentState.currentPhase === 1) {
+                    currentState.currentPhase = 2;
+                }
+
+                localStorage.setItem('oop_exam_state', JSON.stringify(currentState));
+
+                // Transform Submit button into a dashboard route handler
+                const actionBtn = document.getElementById('submit-phase-btn');
+                actionBtn.innerHTML = 'Return to Dashboard Hub <i class="fa-solid fa-circle-chevron-right"></i>';
+                actionBtn.addEventListener('click', () => {
+                    window.location.href = 'index.html';
+                });
+            });
+
+            // Keep tracking global reset behaviors
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                if(confirm('Are you absolutely certain you want to purge your current structural progress across all modules? This action cannot be undone.')) {
+                    localStorage.removeItem('oop_exam_state');
+                    window.location.href = 'index.html';
+                }
+            });
+
+            // Boot initialization loops
+            initMatrix();
+        });
+    </script>
+</body>
+</html>

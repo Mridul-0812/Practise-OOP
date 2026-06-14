@@ -3,166 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innocent Until Proven Imposter</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Object-Oriented Programming & Software Engineering Suite</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="matrix-background"></div>
-    
-    <main class="game-container">
-            
-        <header class="game-header">
-            <h1 class="ominous-title" data-text="INNOCENT UNTIL PROVEN IMPOSTER">
-                INNOCENT UNTIL PROVEN IMPOSTER
-            </h1>
-            <p class="subtitle">A Game of Semantic Leaks & Shifting Contexts</p>
+
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-code-branch glowing-icon"></i>
+            <span>SWE Engine</span>
+        </div>
+        <ul class="nav-links">
+            <li class="active"><a href="index.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+            <li><a href="definitions.html"><i class="fa-solid fa-book"></i> 1. Definitions</a></li>
+            <li><a href="mcq.html"><i class="fa-solid fa-list-check"></i> 2. MCQs</a></li>
+            <li><a href="saq.html"><i class="fa-solid fa-pen-to-square"></i> 3. Short Answer</a></li>
+            <li><a href="code.html"><i class="fa-solid fa-terminal"></i> 4. Code Practical</a></li>
+            <li><a href="erd.html"><i class="fa-solid fa-diagram-project"></i> 5. Class & ERDs</a></li>
+            <li><a href="test.html"><i class="fa-solid fa-vial"></i> 6. Testing Matrices</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <button id="reset-btn" class="btn-secondary"><i class="fa-solid fa-rotate-right"></i> Reset Progress</button>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        
+        <header class="glass-panel glowing-border header-panel">
+            <h1>Object-Oriented Programming & Software Engineering Examination Suite</h1>
+            <p>Welcome to the ultimate validation arena. This platform assesses core architectural engineering, object-oriented paradigms, and verification methodologies based explicitly on your syllabus guidelines.</p>
         </header>
 
-        <section id="setup-screen" class="game-card active">
-            <h2>Initialise Neural Network</h2>
-            <p class="instruction">Gather 3 to 10 players locally. Enter names to begin alignment.</p>
-
-            <div class="control-matrix-container" style="background: rgba(255, 255, 255, 0.03); border: 1px solid #323f5e; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; font-family: monospace; text-align: left;">
-                <h3 style="color: #00f2fe; margin-top: 0; font-size: 1rem; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid #323f5e; padding-bottom: 0.5rem; margin-bottom: 1rem;">
-                    SYSTEM MODIFIER PARAMETERS
-                </h3>
+        <div class="dashboard-grid">
+            
+            <section class="glass-panel rules-panel">
+                <h2><i class="fa-solid fa-gavel"></i> Assessment Protocols</h2>
+                <ul class="protocols-list">
+                    <li><i class="fa-solid fa-circle-chevron-right text-accent"></i> Ensure all phase sequences are locked in systematically; skipping modules will penalise your adaptive scoring trajectory.</li>
+                    <li><i class="fa-solid fa-circle-chevron-right text-accent"></i> Scripting syntax inputs in Phase 4 must precisely conform to strict standard architectural specifications.</li>
+                    <li><i class="fa-solid fa-circle-chevron-right text-accent"></i> Structural testing matrices in Phase 6 mandate exact boundary definitions for edge cases.</li>
+                </ul>
                 
-                <div style="margin-bottom: 0.8rem; display: flex; align-items: center;">
-                    <input type="checkbox" id="category-inversion-checkbox" checked style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; accent-color: #00f2fe;">
-                    <label for="category-inversion-checkbox" style="color: #fff; font-size: 0.9rem; cursor: pointer;">
-                        Enable Category Inversion Anomaly <span style="color: #4facfe;">(25% Event Chance)</span>
-                    </label>
+                <div class="cta-wrapper">
+                    <button id="start-exam-btn" class="btn-primary glowing-btn">Launch Examination Portal <i class="fa-solid fa-rocket"></i></button>
                 </div>
+            </section>
 
-                <div style="margin-bottom: 0.8rem; display: flex; align-items: center;">
-                    <input type="checkbox" id="phantom-checkbox" checked style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; accent-color: #00ff66;">
-                    <label for="phantom-checkbox" style="color: #fff; font-size: 0.9rem; cursor: pointer;">
-                        Enable Phantom Protocol Ghost Threats <span style="color: #00ff66;">(15% Match Chance)</span>
-                    </label>
+            <section class="glass-panel metrics-panel">
+                <h2><i class="fa-solid fa-chart-simple"></i> Comprehensive Performance Matrix</h2>
+                <table class="marks-table">
+                    <thead>
+                        <tr>
+                            <th>Examination Phase</th>
+                            <th>Assessment Type</th>
+                            <th>Weighting</th>
+                            <th>Status</th>
+                            <th>Awarded Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="row-definitions">
+                            <td>Phase 1</td>
+                            <td>Vocabulary Matching Grid</td>
+                            <td>15%</td>
+                            <td><span class="badge badge-pending">Not Started</span></td>
+                            <td class="score-display">0 / 30</td>
+                        </tr>
+                        <tr id="row-mcq">
+                            <td>Phase 2</td>
+                            <td>Advanced Multiple Choice</td>
+                            <td>20%</td>
+                            <td><span class="badge badge-pending">Not Started</span></td>
+                            <td class="score-display">0 / 30</td>
+                        </tr>
+                        <tr id="row-saq">
+                            <td>Phase 3</td>
+                            <td>Architectural Short Answer</td>
+                            <td>15%</td>
+                            <td><span class="badge badge-pending">Not Started</span></td>
+                            <td class="score-display">0 / 30</td>
+                        </tr>
+                        <tr id="row-code">
+                            <td>Phase 4</td>
+                            <td>Practical Design Solution</td>
+                            <td>20%</td>
+                            <td><span class="badge badge-pending">Not Started</span></td>
+                            <td class="score-display">0 / 10</td>
+                        </tr>
+                        <tr id="row-erd">
+                            <td>Phase 5</td>
+                            <td>UML & Class Structure Modelling</td>
+                            <td>15%</td>
+                            <td><span class="badge badge-pending">Not Started</span></td>
+                            <td class="score-display">0 / 10</td>
+                        </tr>
+                        <tr id="row-test">
+                            <td>Phase 6</td>
+                            <td>Black, White & Grey Box Testing</td>
+                            <td>15%</td>
+                            <td><span class="badge badge-pending">Not Started</span></td>
+                            <td class="score-display">0 / 15</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-score-row">
+                            <td colspan="3">Aggregate Metric Calculation</td>
+                            <td>Current Grade:</td>
+                            <td id="aggregate-score">0% (Pending)</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </section>
+        </div>
+
+        <section class="glass-panel timeline-panel">
+            <h2><i class="fa-solid fa-route"></i> Unified Sequential Progression Timeline</h2>
+            <div class="timeline-container">
+                <div class="timeline-step step-active" data-phase="1">
+                    <div class="step-node">1</div>
+                    <span class="step-label">Definitions</span>
                 </div>
-
-                <div style="margin-bottom: 0.8rem; display: flex; align-items: center;">
-                    <input type="checkbox" id="paranoiac-toggle" checked style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; accent-color: #ffaa00;">
-                    <label for="paranoiac-toggle" style="color: #fff; font-size: 0.9rem; cursor: pointer;">
-                        Enable Blind Synchronisation Paranoiac <span style="color: #ffaa00;">(15% Event Chance)</span>
-                    </label>
+                <div class="timeline-line"></div>
+                <div class="timeline-step" data-phase="2">
+                    <div class="step-node">2</div>
+                    <span class="step-label">MCQs</span>
                 </div>
-
-                <div style="margin-bottom: 0.8rem; display: flex; align-items: center;">
-                    <input type="checkbox" id="mimic-checkbox" checked style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; accent-color: #bc00ff;">
-                    <label for="mimic-checkbox" style="color: #fff; font-size: 0.9rem; cursor: pointer;">
-                        Enable Echo Chamber Mimic Allocation <span style="color: #bc00ff;">(10% Event Chance)</span>
-                    </label>
+                <div class="timeline-line"></div>
+                <div class="timeline-step" data-phase="3">
+                    <div class="step-node">3</div>
+                    <span class="step-label">Short Answer</span>
                 </div>
-
-                <div style="margin-bottom: 1.2rem; display: flex; align-items: center;">
-                    <input type="checkbox" id="static-frequency-checkbox" checked style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; accent-color: #ff0055;">
-                    <label for="static-frequency-checkbox" style="color: #fff; font-size: 0.9rem; cursor: pointer;">
-                        Enable Static Frequency Mute Sabotage <span style="color: #ff0055;">(10% Event Chance)</span>
-                    </label>
+                <div class="timeline-line"></div>
+                <div class="timeline-step" data-phase="4">
+                    <div class="step-node">4</div>
+                    <span class="step-label">Practical Code</span>
                 </div>
-
-                <div style="border-top: 1px solid #323f5e; padding-top: 0.8rem;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
-                        <div style="display: flex; align-items: center;">
-                            <input type="checkbox" id="mutation-rate-checkbox" checked style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; accent-color: #f43f5e;">
-                            <label for="mutation-rate-checkbox" style="color: #fff; font-size: 0.9rem; cursor: pointer;">
-                                Permit Chaos Mutation (Cross-Universe Dataset)
-                            </label>
-                        </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 15px; padding-left: 28px;">
-                        <input type="range" id="mutation-rate" min="0.00" max="1.00" step="0.05" value="0.30" style="flex-grow: 1; cursor: pointer; accent-color: #f43f5e;">
-                        <span style="color: #f43f5e; font-size: 0.85rem; font-weight: bold; min-width: 40px; text-align: right;" id="mutation-rate-display">30%</span>
-                    </div>
+                <div class="timeline-line"></div>
+                <div class="timeline-step" data-phase="5">
+                    <div class="step-node">5</div>
+                    <span class="step-label">ERD / UML</span>
+                </div>
+                <div class="timeline-line"></div>
+                <div class="timeline-step" data-phase="6">
+                    <div class="step-node">6</div>
+                    <span class="step-label">Methodologies</span>
                 </div>
             </div>
-            
-            <div class="input-group">
-                <input type="text" id="player-name-input" placeholder="Enter player name...">
-                <button id="add-player-btn" class="btn secondary">Add Mind</button>
-            </div>
-
-            <ul id="player-list" class="player-list"></ul>
-
-            <button id="start-game-btn" class="btn primary dynamic-hide" disabled>Synchronise Synapses</button>
-            <button class="btn secondary rules-toggle-btn">VIEW GAME PROTOCOLS</button>
-        </section>
-
-        <section id="reveal-screen" class="game-card">
-            <div class="progress-bar"><div id="reveal-progress" class="progress"></div></div>
-            <h2 id="current-player-turn">Player's Turn</h2>
-            <p class="instruction">Pass the device to the player named above. Nobody else look!</p>
-            
-            <div class="secret-vault">
-                <button id="secure-peek-btn" class="btn warning">Click to Peek Secret Node</button>
-                
-                <div id="secret-data" class="secret-data hidden">
-                    <div class="data-field">
-                        <span class="label">ASSIGNED NODE:</span>
-                        <span id="secret-word" class="value">????</span>
-                    </div>
-                    <div class="data-field">
-                        <span class="label">MATRIX CONTEXT:</span>
-                        <span id="secret-hint" class="value">????</span>
-                    </div>
-                </div>
-            </div>
-
-            <button id="next-player-btn" class="btn primary hidden">Lock & Pass Device</button>
-        </section>
-
-        <section id="debate-screen" class="game-card">
-            <h2>Neural Transmission Active</h2>
-            <p class="instruction">Discuss your nodes. Find the paradox. Who belongs to a parallel universe?</p>
-            
-            <div class="timer-display">
-                <div class="countdown" id="timer">03:00</div>
-                <div class="timer-controls">
-                    <button id="pause-timer-btn" class="btn mini">Pause</button>
-                </div>
-            </div>
-
-            <div class="reminder-box">
-                <p>⚠️ <strong>Remember:</strong> Everyone has a completely unique word. Listen for the underlying structural logic, not just matching terms.</p>
-            </div>
-
-            <button id="proceed-to-vote-btn" class="btn primary">Initiate Purge Protocol</button>
-        </section>
-
-        <section id="vote-screen" class="game-card">
-            <h2>Isolate the Paradox</h2>
-            <p class="instruction">Cast your votes. Who is operating on a leaked context map?</p>
-            
-            <div id="voting-pool" class="voting-grid"></div>
-        </section>
-
-        <section id="results-screen" class="game-card">
-            <h2>Matrix Evaluation</h2>
-            <div id="verdict-banner" class="verdict-banner"></div>
-
-            <div class="truth-reveal">
-                <h3>The Real Alignments:</h3>
-                <div id="final-reveal-list" class="reveal-list"></div>
-            </div>
-
-            <button id="play-again-btn" class="btn primary">Realign Synapses (Play Again)</button>
         </section>
 
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const slider = document.getElementById('mutation-rate');
-            const display = document.getElementById('mutation-rate-display');
-            if (slider && display) {
-                slider.addEventListener('input', (e) => {
-                    display.innerText = `${Math.round(e.target.value * 100)}%`;
-                });
+            // Setup default empty state schema for LocalStorage
+            const defaultExamState = {
+                currentPhase: 1,
+                isCompleted: false,
+                scores: {
+                    definitions: { score: 0, total: 30, status: 'Not Started' },
+                    mcq: { score: 0, total: 30, status: 'Not Started' },
+                    saq: { score: 0, total: 30, status: 'Not Started' },
+                    code: { score: 0, total: 10, status: 'Not Started' },
+                    erd: { score: 0, total: 10, status: 'Not Started' },
+                    test: { score: 0, total: 15, status: 'Not Started' }
+                }
+            };
+
+            // Initialise or pull existing state
+            let currentExamState = JSON.parse(localStorage.getItem('oop_exam_state'));
+            if (!currentExamState) {
+                currentExamState = defaultExamState;
+                localStorage.setItem('oop_exam_state', JSON.stringify(currentExamState));
             }
+
+            // Sync the UI values seamlessly based on active state data
+            const updateDashboardUI = () => {
+                const state = currentExamState.scores;
+                
+                // Iterative assignment of table data variables
+                Object.keys(state).forEach(key => {
+                    const row = document.getElementById(`row-${key}`);
+                    if(row) {
+                        const badge = row.querySelector('.badge');
+                        const scoreDisplay = row.querySelector('.score-display');
+                        
+                        badge.textContent = state[key].status;
+                        badge.className = `badge badge-${state[key].status.toLowerCase().replace(' ', '-')}`;
+                        scoreDisplay.textContent = `${state[key].score} / ${state[key].total}`;
+                    }
+                });
+
+                // Update visual nodes along the linear step timeline
+                const timelineSteps = document.querySelectorAll('.timeline-step');
+                timelineSteps.forEach(step => {
+                    const phaseNum = parseInt(step.getAttribute('data-phase'));
+                    step.classList.remove('step-active', 'step-complete');
+                    
+                    if (phaseNum < currentExamState.currentPhase) {
+                        step.classList.add('step-complete');
+                    } else if (phaseNum === currentExamState.currentPhase) {
+                        step.classList.add('step-active');
+                    }
+                });
+
+                // Calculate weighted aggregate mathematical value
+                calculateOverallGrade(state);
+            };
+
+            const calculateOverallGrade = (state) => {
+                const weightings = { definitions: 0.15, mcq: 0.20, saq: 0.15, code: 0.20, erd: 0.15, test: 0.15 };
+                let aggregatePercentage = 0;
+                let startedAny = false;
+
+                Object.keys(state).forEach(key => {
+                    if (state[key].status !== 'Not Started') startedAny = true;
+                    const phasePercent = (state[key].score / state[key].total) * 100;
+                    aggregatePercentage += phasePercent * weightings[key];
+                });
+
+                const gradeDisplay = document.getElementById('aggregate-score');
+                if (!startedAny) {
+                    gradeDisplay.textContent = '0% (Pending)';
+                } else {
+                    gradeDisplay.textContent = `${aggregatePercentage.toFixed(1)}%`;
+                }
+            };
+
+            // Event Handlers for control elements
+            document.getElementById('start-exam-btn').addEventListener('click', () => {
+                // Map out files dynamically depending on current progress checkpoint
+                const phaseRouting = { 1: 'definitions.html', 2: 'mcq.html', 3: 'saq.html', 4: 'code.html', 5: 'erd.html', 6: 'test.html' };
+                window.location.href = phaseRouting[currentExamState.currentPhase] || 'definitions.html';
+            });
+
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                if(confirm('Are you absolutely certain you want to purge your current structural progress across all modules? This action cannot be undone.')) {
+                    localStorage.setItem('oop_exam_state', JSON.stringify(defaultExamState));
+                    currentExamState = defaultExamState;
+                    updateDashboardUI();
+                }
+            });
+
+            // Trigger structural rendering
+            updateDashboardUI();
         });
     </script>
-    <script src="words.js"></script>
-    <script src="script.js"></script>
 </body>
 </html>

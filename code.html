@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 4: Simple Coding Practice</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Specific Sandbox Split-Screen Layout Components */
+        .sandbox-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+            min-height: 500px;
+        }
+
+        .workspace-panel {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .prompt-card {
+            background: rgba(20, 24, 35, 0.6);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            padding: 20px;
+            border-radius: 8px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .editor-container {
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: #11131a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .code-input-area {
+            width: 100%;
+            height: 350px;
+            background: transparent;
+            color: #00ff66;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            border: none;
+            resize: none;
+            outline: none;
+            line-height: 1.5;
+        }
+
+        /* Utility classes to kill default browser interference */
+        .code-input-area::placeholder {
+            color: #555c70;
+        }
+
+        .navigation-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+        }
+
+        .question-nav-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            background: transparent;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: #00f2fe;
+            color: #000;
+            box-shadow: 0 0 10px #00f2fe;
+        }
+
+        .nav-dot.completed {
+            border-color: #00ff66;
+            background: rgba(0, 255, 102, 0.2);
+        }
+
+        .feedback-panel {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback-success {
+            background: rgba(0, 255, 102, 0.1);
+            border: 1px solid #00ff66;
+        }
+
+        .feedback-partial {
+            background: rgba(255, 186, 0, 0.1);
+            border: 1px solid #ffba00;
+        }
+
+        .override-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .override-input {
+            width: 60px;
+            background: #222633;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 4px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .extension-link-wrapper {
+            margin-top: 40px;
+            text-align: center;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+        }
+
+        .sample-solution-block {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 10px;
+            color: #a5b4fc;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-code-branch glowing-icon"></i>
+            <span>SWE Engine</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+            <li><a href="definitions.html"><i class="fa-solid fa-book"></i> 1. Definitions</a></li>
+            <li><a href="mcq.html"><i class="fa-solid fa-list-check"></i> 2. MCQs</a></li>
+            <li><a href="saq.html"><i class="fa-solid fa-pen-to-square"></i> 3. Short Answer</a></li>
+            <li class="active"><a href="code.html"><i class="fa-solid fa-terminal"></i> 4. Code Practical</a></li>
+            <li><a href="erd.html"><i class="fa-solid fa-diagram-project"></i> 5. Class & ERDs</a></li>
+            <li><a href="test.html"><i class="fa-solid fa-vial"></i> 6. Testing Matrices</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <button id="reset-btn" class="btn-secondary"><i class="fa-solid fa-rotate-right"></i> Reset Progress</button>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        
+        <header class="glass-panel glowing-border header-panel">
+            <h1>Phase 4: Pure Code Sandbox & Automated Syntax Matcher</h1>
+            <p>Execute clear code frameworks safely matching requested technical object-oriented behaviours. British English standardisation applied.</p>
+        </header>
+
+        <div class="glass-panel" style="margin-top: 20px; padding: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 id="question-title-display">Question 1 of 10</h3>
+                <div class="question-nav-dots" id="dots-container">
+                    </div>
+            </div>
+        </div>
+
+        <div class="sandbox-container">
+            
+            <div class="workspace-panel">
+                <div class="prompt-card">
+                    <h3 style="color: #00f2fe; margin-bottom: 10px;"><i class="fa-solid fa-circle-info"></i> Architectural Specification</h3>
+                    <div id="instruction-text" style="line-height: 1.6; font-size: 14px;">
+                        </div>
+                </div>
+            </div>
+
+            <div class="workspace-panel">
+                <div class="editor-container">
+                    <span style="font-size: 11px; color: #555c70; margin-bottom: 5px; font-family: monospace;">// Flat text container: Spellcheck & auto-syntax routines deactivated</span>
+                    <textarea 
+                        id="code-editor-input" 
+                        class="code-input-area" 
+                        placeholder="# Write your Python OOP script framework here..."
+                        autocorrect="off" 
+                        autocapitalize="off" 
+                        spellcheck="false"
+                    ></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div id="feedback-panel" class="feedback-panel">
+            <h4 id="feedback-heading">Evaluation Result</h4>
+            <p id="feedback-text"></p>
+            
+            <div id="sample-answer-box" style="margin-top: 15px;">
+                <strong>Expected Model Reference Sample Answer:</strong>
+                <div class="sample-solution-block" id="sample-code-display"></div>
+            </div>
+
+            <div class="override-box">
+                <label for="manual-mark-input"><i class="fa-solid fa-user-pen text-accent"></i> Modify Awarded Mark:</label>
+                <input type="number" id="manual-mark-input" class="override-input" min="0" max="1" step="1">
+                <span id="max-possible-mark">/ 1 Mark</span>
+                <button id="save-override-btn" class="btn-secondary" style="padding: 3px 10px; font-size: 12px;">Apply Custom Score</button>
+            </div>
+        </div>
+
+        <div class="navigation-bar">
+            <button id="prev-question-btn" class="btn-secondary"><i class="fa-solid fa-arrow-left"></i> Previous Step</button>
+            <button id="check-code-btn" class="btn-primary" style="background: linear-gradient(135deg, #00ff66 0%, #00b344 100%); color: #000; font-weight: bold;"><i class="fa-solid fa-square-check"></i> Evaluate Solution</button>
+            <button id="next-question-btn" class="btn-secondary">Next Step <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+
+        <div class="extension-link-wrapper">
+            <p style="color: #8a94a6; margin-bottom: 12px; font-size: 14px;">Looking for advanced architectural challenges, structural design patterns, and deep-copy validation algorithms?</p>
+            <a href="code2.html" class="btn-primary" style="display: inline-block; text-decoration: none; background: linear-gradient(135deg, #7928ca 0%, #ff0080 100%); padding: 12px 24px;">
+                Proceed to Advanced Coding Challenges (code2.html) <i class="fa-solid fa-circle-arrow-right"></i>
+            </a>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 10 Simple Warm-up Questions testing distinct pillars and basic concepts
+            const easyCodeQuestions = [
+                {
+                    id: 1,
+                    pillar: "Class Mechanics",
+                    title: "Basic Class Architecture",
+                    steps: "1. Define a class named 'Car'.<br>2. Add an __init__ constructor initializing a public attribute named 'colour'.",
+                    sample: "class Car:\n    def __init__(self, colour):\n        self.colour = colour",
+                    // Simple validation checkpoints matching stripped strings
+                    regexKeywords: ["classCar", "def__init__(self,colour)", "self.colour=colour"]
+                },
+                {
+                    id: 2,
+                    pillar: "Encapsulation",
+                    title: "Private Visibility State",
+                    steps: "1. Define a class named 'BankAccount'.<br>2. Inside the constructor, instantiate a private attribute named 'balance' setting it to 0. (Hint: Use double underscores).",
+                    sample: "class BankAccount:\n    def __init__(self):\n        self.__balance = 0",
+                    regexKeywords: ["classBankAccount", "def__init__(self)", "self.__balance=0"]
+                },
+                {
+                    id: 3,
+                    pillar: "Inheritance",
+                    title: "Subclass Hierarchy Definition",
+                    steps: "1. Create a parent class named 'Vehicle' with a simple pass statement inside.<br>2. Create a child class named 'Bicycle' that explicitly inherits from 'Vehicle'.",
+                    sample: "class Vehicle:\n    pass\n\nclass Bicycle(Vehicle):\n    pass",
+                    regexKeywords: ["classVehicle", "pass", "classBicycle(Vehicle)"]
+                },
+                {
+                    id: 4,
+                    pillar: "Polymorphism",
+                    title: "Method Overriding Setup",
+                    steps: "1. Inside a class named 'Dog', create a method named 'speak' that returns 'Bark'.<br>2. Ensure self parameter is declared correctly.",
+                    sample: "class Dog:\n    def speak(self):\n        return 'Bark'",
+                    regexKeywords: ["classDog", "defspeak(self)", "return'Bark'"]
+                },
+                {
+                    id: 5,
+                    pillar: "Encapsulation Getter",
+                    title: "Safe Property Read Access",
+                    steps: "1. Create a class named 'User'.<br>2. Add a getter method named 'get_username(self)' that returns the private attribute value stored in 'self.__username'.",
+                    sample: "class User:\n    def get_username(self):\n        return self.__username",
+                    regexKeywords: ["classUser", "defget_username(self)", "returnself.__username"]
+                },
+                {
+                    id: 6,
+                    pillar: "Constructor Linking",
+                    title: "Superclass Constructor Link via super()",
+                    steps: "1. Inside the child class constructor 'def __init__(self, brand):', call the parent class's constructor passing up the variable 'brand' using the super() function.",
+                    sample: "def __init__(self, brand):\n    super().__init__(brand)",
+                    regexKeywords: ["def__init__(self,brand)", "super().__init__(brand)"]
+                },
+                {
+                    id: 7,
+                    pillar: "Generalisation",
+                    title: "Extracting Mutual Base Attributes",
+                    steps: "1. Generalise code by creating a common parent class named 'Employee'.<br>2. Add an __init__ constructor that maps a shared 'name' parameter into 'self.name'.",
+                    sample: "class Employee:\n    def __init__(self, name):\n        self.name = name",
+                    regexKeywords: ["classEmployee", "def__init__(self,name)", "self.name=name"]
+                },
+                {
+                    id: 8,
+                    pillar: "Encapsulation Setter",
+                    title: "Safe Property State Mutation",
+                    steps: "1. Create a class named 'SmartDevice'.<br>2. Write a setter method named 'set_volume(self, value)' that reassigns a private attribute 'self.__volume' equal to the incoming parameter value.",
+                    sample: "class SmartDevice:\n    def set_volume(self, value):\n        self.__volume = value",
+                    regexKeywords: ["classSmartDevice", "defset_volume(self,value)", "self.__volume=value"]
+                },
+                {
+                    id: 9,
+                    pillar: "Object Instantiation",
+                    title: "Creating Instances in Memory",
+                    steps: "1. Assuming a class 'Book' exists requiring a title string, instantiate an instance of this class and assign the created object into a variable named 'my_book'. Pass the string 'OOP' as its argument.",
+                    sample: "my_book = Book('OOP')",
+                    regexKeywords: ["my_book=Book('OOP')"]
+                },
+                {
+                    id: 10,
+                    pillar: "Polymorphic Interface",
+                    title: "Uniform Method Interfaces",
+                    steps: "1. Define a class named 'Rectangle'.<br>2. Create a standardized method signature named 'calculate_area(self)' containing a simple pass command.",
+                    sample: "class Rectangle:\n    def calculate_area(self):\n        pass",
+                    regexKeywords: ["classRectangle", "defcalculate_area(self)", "pass"]
+                }
+            ];
+
+            // LocalStorage State Coordination Defaults
+            const defaultState = {
+                currentPhase: 4,
+                isCompleted: false,
+                scores: {
+                    definitions: { score: 0, total: 30, status: 'Not Started' },
+                    mcq: { score: 0, total: 30, status: 'Not Started' },
+                    saq: { score: 0, total: 30, status: 'Not Started' },
+                    code: { score: 0, total: 10, status: 'Not Started' },
+                    erd: { score: 0, total: 10, status: 'Not Started' },
+                    test: { score: 0, total: 15, status: 'Not Started' }
+                },
+                phase4Answers: Array(10).fill(""),
+                phase4Scores: Array(10).fill(0)
+            };
+
+            let appState = JSON.parse(localStorage.getItem('oop_exam_state')) || defaultState;
+            
+            // Backwards compatibility sync if tracking arrays aren't present
+            if (!appState.phase4Answers) appState.phase4Answers = Array(10).fill("");
+            if (!appState.phase4Scores) appState.phase4Scores = Array(10).fill(0);
+
+            let activeIndex = 0;
+
+            const dotsContainer = document.getElementById('dots-container');
+            const titleDisplay = document.getElementById('question-title-display');
+            const instructionText = document.getElementById('instruction-text');
+            const codeEditor = document.getElementById('code-editor-input');
+            const feedbackPanel = document.getElementById('feedback-panel');
+            const feedbackText = document.getElementById('feedback-text');
+            const sampleCodeDisplay = document.getElementById('sample-code-display');
+            const manualMarkInput = document.getElementById('manual-mark-input');
+
+            // Render navigation layout tracker dots
+            const initProgressTrackerDots = () => {
+                dotsContainer.innerHTML = '';
+                for (let i = 0; i < 10; i++) {
+                    const dot = document.createElement('button');
+                    dot.className = 'nav-dot';
+                    if (i === activeIndex) dot.classList.add('active');
+                    if (appState.phase4Scores[i] > 0) dot.classList.add('completed');
+                    dot.textContent = i + 1;
+                    dot.addEventListener('click', () => saveAndGoTo(i));
+                    dotsContainer.appendChild(dot);
+                }
+            };
+
+            // Load explicit data state corresponding to active index context
+            const renderActiveQuestion = () => {
+                const currentQ = easyCodeQuestions[activeIndex];
+                titleDisplay.innerHTML = `<span style='color: #00f2fe;'>${currentQ.pillar}</span> — ${currentQ.title}`;
+                
+                instructionText.innerHTML = `
+                    <p><strong>Testing Objective:</strong> Basic implementation practice.</p>
+                    <div style='background: rgba(0,0,0,0.3); padding: 12px; border-left: 3px solid #00f2fe; margin: 10px 0; font-family: monospace;'>
+                        ${currentQ.steps}
+                    </div>
+                `;
+
+                // Set content directly. Ensure textarea is blank if no prior data answer recorded
+                codeEditor.value = appState.phase4Answers[activeIndex] || "";
+                feedbackPanel.style.display = 'none';
+                
+                initProgressTrackerDots();
+            };
+
+            const saveAndGoTo = (targetIndex) => {
+                if (targetIndex >= 0 && targetIndex < 10) {
+                    appState.phase4Answers[activeIndex] = codeEditor.value;
+                    localStorage.setItem('oop_exam_state', JSON.stringify(appState));
+                    activeIndex = targetIndex;
+                    renderActiveQuestion();
+                }
+            };
+
+            // Light validation logic string operations cleanup
+            document.getElementById('check-code-btn').addEventListener('click', () => {
+                const userInput = codeEditor.value;
+                appState.phase4Answers[activeIndex] = userInput;
+                
+                const targetQ = easyCodeQuestions[activeIndex];
+                
+                // Strip all white spaces, line breaks, comments, single quotes, double quotes to standardize evaluation
+                const cleanString = userInput.replace(/\s+/g, '').replace(/#.*$/gm, '').replace(/['"]/g, '');
+                
+                let matchesAll = true;
+                targetQ.regexKeywords.forEach(keyword => {
+                    const cleanKeyword = keyword.replace(/['"]/g, '');
+                    if (!cleanString.includes(cleanKeyword)) {
+                        matchesAll = false;
+                    }
+                });
+
+                feedbackPanel.style.display = 'block';
+                sampleCodeDisplay.textContent = targetQ.sample;
+
+                if (matchesAll && cleanString.length > 0) {
+                    feedbackPanel.className = "feedback-panel feedback-success";
+                    feedbackText.innerHTML = "<i class='fa-solid fa-circle-check' style='color:#00ff66;'></i> <strong>Automated Metric Match: Passed!</strong> Syntax architecture conforms perfectly with standard core expectations.";
+                    appState.phase4Scores[activeIndex] = 1;
+                    manualMarkInput.value = 1;
+                } else {
+                    feedbackPanel.className = "feedback-panel feedback-partial";
+                    feedbackText.innerHTML = "<i class='fa-solid fa-circle-exclamation' style='color:#ffba00;'></i> <strong>Check Completed:</strong> Discrepancies found or empty initialization framework detected. Review structural specifications or adjust awarded score manually if structural requirements were met codewise.";
+                    appState.phase4Scores[activeIndex] = 0;
+                    manualMarkInput.value = 0;
+                }
+
+                syncTotalScoreToGlobalSchema();
+            });
+
+            // Action to manually re-write metrics tracking array 
+            document.getElementById('save-override-btn').addEventListener('click', () => {
+                let assignedVal = parseInt(manualMarkInput.value) || 0;
+                if (assignedVal < 0) assignedVal = 0;
+                if (assignedVal > 1) assignedVal = 1;
+                
+                manualMarkInput.value = assignedVal;
+                appState.phase4Scores[activeIndex] = assignedVal;
+                
+                alert(`Successfully altered question ${activeIndex + 1} score checkpoint to ${assignedVal} mark.`);
+                syncTotalScoreToGlobalSchema();
+                initProgressTrackerDots();
+            });
+
+            const syncTotalScoreToGlobalSchema = () => {
+                const totalPhase4Sum = appState.phase4Scores.reduce((a, b) => a + b, 0);
+                appState.scores.code.score = totalPhase4Sum;
+                appState.scores.code.status = 'Completed';
+                
+                // Advance tracking mechanism conditionally
+                if(appState.currentPhase === 4) {
+                    appState.currentPhase = 5;
+                }
+                
+                localStorage.setItem('oop_exam_state', JSON.stringify(appState));
+            };
+
+            // Steps Pagination controls
+            document.getElementById('prev-question-btn').addEventListener('click', () => {
+                saveAndGoTo(activeIndex - 1);
+            });
+
+            document.getElementById('next-question-btn').addEventListener('click', () => {
+                saveAndGoTo(activeIndex + 1);
+            });
+
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                if(confirm('Are you absolutely certain you want to purge your current programming exercises data? This action cannot be undone.')) {
+                    appState.phase4Answers = Array(10).fill("");
+                    appState.phase4Scores = Array(10).fill(0);
+                    appState.scores.code.score = 0;
+                    appState.scores.code.status = 'Not Started';
+                    localStorage.setItem('oop_exam_state', JSON.stringify(appState));
+                    activeIndex = 0;
+                    renderActiveQuestion();
+                }
+            });
+
+            // Initial Execution Trigger
+            renderActiveQuestion();
+        });
+    </script>
+</body>
+</html>
