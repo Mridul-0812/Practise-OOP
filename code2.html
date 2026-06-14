@@ -33,14 +33,11 @@
             flex-grow: 1;
             overflow-y: auto;
         }
-
-        /* --- HIGH-PERFORMANCE SYNTAX EMBED LAYER --- */
+        
+        /* --- PERFECTLY ALIGNED DUAL-LAYER EDITING ENGINE --- */
         .editor-container {
             position: relative;
             flex-grow: 1;
-            display: grid;
-            grid-template-columns: 1fr;
-            grid-template-rows: 1fr;
             background: #0d0e15;
             border-radius: 12px;
             border: 1px solid var(--neon-blue, #00f0ff);
@@ -50,46 +47,49 @@
             overflow: hidden;
         }
 
-        /* Both layers must share identical font metrics, line heights, and spacing properties */
+        /* Both layers must match font metrics perfectly to line up down to the pixel */
         .code-input-area, .syntax-highlight-overlay {
-            grid-area: 1 / 1 / 2 / 2;
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: calc(100% - 32px);
+            height: calc(100% - 32px);
             font-family: 'Fira Code', 'Courier New', Courier, monospace;
             font-size: 14px;
             line-height: 1.6;
             white-space: pre;
-            overflow: auto;
-            padding: 0;
+            padding: 12px;
             margin: 0;
+            box-sizing: border-box;
             border: none;
             outline: none;
             background: transparent;
-            box-sizing: border-box;
         }
 
-        /* Top Layer: Transparent text color so the native cursor is visible while editing */
+        /* Front Layer: Hidden text characters but captures typing and retains cursor */
         .code-input-area {
             color: transparent;
-            caret-color: #39ff14; /* Neon Green VS Code style active caret */
+            caret-color: #39ff14; /* Neon green cursor tracking */
             resize: none;
             z-index: 2;
+            overflow: auto;
         }
 
-        /* Bottom Layer: Preformatted structure reading mapped lexical color categories */
+        /* Back Layer: Displays beautifully colorized syntax markup tokens */
         .syntax-highlight-overlay {
             color: #e2e8f0;
             z-index: 1;
+            overflow: hidden;
             pointer-events: none;
         }
 
-        /* VS Code / Python Graphical Style Token Matrices */
-        .token-keyword { color: #ff79c6; font-weight: bold; } /* class, def, if, else, return, pass, etc */
-        .token-self    { color: #bd93f9; font-style: italic; } /* self object references */
-        .token-builtin { color: #8be9fd; }                    /* assertEqual, super, print, str, int */
-        .token-string  { color: #f1fa8c; }                    /* 'String Literals', "TX-99" */
-        .token-number  { color: #bd93f9; }                    /* Numbers: 4, 12500.0, 0 */
-        .token-comment { color: #6272a4; font-style: italic; } /* Inline comment configurations (#) */
+        /* VS Code Style Python Palette Options */
+        .token-keyword { color: #ff79c6 !important; font-weight: bold; } 
+        .token-self    { color: #bd93f9 !important; font-style: italic; } 
+        .token-builtin { color: #8be9fd !important; }                    
+        .token-string  { color: #f1fa8c !important; }                    
+        .token-number  { color: #bd93f9 !important; }                    
+        .token-comment { color: #6272a4 !important; font-style: italic; } 
 
         .navigation-bar {
             display: flex;
@@ -234,7 +234,6 @@
         </div>
     </nav>
     <main class="dashboard-container">
-
         <header class="glass-panel glowing-border header-panel">
             <h1>Phase 4: Advanced Practical Design Arena</h1>
             <p>Implement comprehensive object-oriented architectures mapping directly to complex system requirements and software engineering principles.</p>
@@ -246,7 +245,6 @@
             </div>
         </div>
         <div class="sandbox-container">
-
             <div class="workspace-panel">
                 <div class="problem-card">
                     <h3 style="color: #00f0ff; margin-bottom: 12px;"><i class="fa-solid fa-circle-info"></i> System Specification</h3>
@@ -255,7 +253,7 @@
             </div>
             <div class="workspace-panel">
                 <div class="editor-container">
-                    <pre id="syntax-overlay" class="syntax-highlight-overlay"><code></code></pre>
+                    <div id="syntax-overlay" class="syntax-highlight-overlay"></div>
                     <textarea
                         id="code-editor-input"
                         class="code-input-area"
@@ -270,7 +268,6 @@
         <div id="feedback-panel" class="feedback-panel">
             <h4 id="feedback-heading" style="font-size: 16px; margin-bottom: 8px;">Evaluation Result</h4>
             <p id="feedback-text" style="font-size: 14px; line-height: 1.5;"></p>
-
             <div class="criteria-dropdown-container">
                 <label for="criteria-selector" style="font-size: 13px; color: #8a94a6; margin-right: 10px;">Select Grading Tier:</label>
                 <select id="criteria-selector" class="criteria-select">
@@ -306,8 +303,6 @@
     </main>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-
-            // 10 Advanced Questions mapped identically to the structural specifications of your code2 schema documents
             const advancedCodeQuestions = [
                 {
                     id: 1,
@@ -401,7 +396,6 @@
                 }
             ];
 
-            // LocalStorage Core Coordination Framework Engine
             const fallbackState = {
                 currentPhase: 4,
                 isCompleted: false,
@@ -418,12 +412,10 @@
             };
             let currentAppState = JSON.parse(localStorage.getItem('oop_exam_state')) || fallbackState;
 
-            // Re-verify structural storage components exist cleanly to maintain full state consistency
             if (!currentAppState.phase4AdvancedAnswers) currentAppState.phase4AdvancedAnswers = Array(10).fill("");
             if (!currentAppState.phase4AdvancedScores) currentAppState.phase4AdvancedScores = Array(10).fill(0);
             let activeChallengeIdx = 0;
 
-            // DOM Pointer Configurations
             const dotsContainer = document.getElementById('dots-container');
             const titleDisplay = document.getElementById('question-title-display');
             const instructionText = document.getElementById('instruction-text');
@@ -433,46 +425,55 @@
             const sampleCodeDisplay = document.getElementById('sample-code-display');
             const manualMarkInput = document.getElementById('manual-mark-input');
             const criteriaSelector = document.getElementById('criteria-selector');
+            const syntaxOverlay = document.getElementById('syntax-overlay');
 
-            // Find matching layout overlay elements
-            const syntaxOverlay = document.getElementById('syntax-overlay').querySelector('code');
-
-            // Pure visual regex token lookup array (Lexical separation without code compiler checks)
+            // --- SINGLE-PASS AIRTIGHT RENDERING PIPELINE ---
             function applyPythonSyntaxHighlighting(code) {
-                // Safeguard HTML code nodes
-                let html = code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                if (!code) return "";
+                
+                // 1. Escape basic tags to avoid UI breakage
+                let html = code
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
 
-                // Python Language Token Mappings
-                html = html.replace(/\b(class|def|if|else|elif|return|pass|import|from|while|for|in|and|or|not|assert|with|as)\b/g, '<span class="token-keyword">$1</span>');
-                html = html.replace(/\b(self)\b/g, '<span class="token-self">$1</span>');
-                html = html.replace(/\b(assertEqual|super|print|int|str|float|list|dict|len)\b/g, '<span class="token-builtin">$1</span>');
-                html = html.replace(/("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g, '<span class="token-string">$1</span>');
-                html = html.replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="token-number">$1</span>');
-                html = html.replace(/(#.*)$/gm, '<span class="token-comment">$1</span>');
+                // 2. Process all structures cleanly via mutual exclusion
+                const tokenRegex = /(#.*)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|\b(class|def|if|else|elif|return|pass|import|from|while|for|in|and|or|not|assert|with|as)\b|\b(self)\b|\b(assertEqual|super|print|int|str|float|list|dict|len)\b|\b(\d+(?:\.\d+)?)\b/g;
+
+                html = html.replace(tokenRegex, (match, comment, string, keyword, selfToken, builtin, number) => {
+                    if (comment) return `<span class="token-comment">${comment}</span>`;
+                    if (string) return `<span class="token-string">${string}</span>`;
+                    if (keyword) return `<span class="token-keyword">${keyword}</span>`;
+                    if (selfToken) return `<span class="token-self">${selfToken}</span>`;
+                    if (builtin) return `<span class="token-builtin">${builtin}</span>`;
+                    if (number) return `<span class="token-number">${number}</span>`;
+                    return match;
+                });
 
                 return html;
             }
 
-            // Sync visual text engine content views
             const syncEditorRendering = () => {
-                syntaxOverlay.innerHTML = applyPythonSyntaxHighlighting(codeEditor.value);
-                // Lock scrolling positions identically
-                syntaxOverlay.parentElement.scrollTop = codeEditor.scrollTop;
-                syntaxOverlay.parentElement.scrollLeft = codeEditor.scrollLeft;
+                let currentContent = codeEditor.value;
+                if (currentContent.endsWith('\n')) {
+                    currentContent += ' ';
+                }
+                syntaxOverlay.innerHTML = applyPythonSyntaxHighlighting(currentContent);
+                syntaxOverlay.scrollTop = codeEditor.scrollTop;
+                syntaxOverlay.scrollLeft = codeEditor.scrollLeft;
             };
 
             codeEditor.addEventListener('input', syncEditorRendering);
             codeEditor.addEventListener('scroll', () => {
-                syntaxOverlay.parentElement.scrollTop = codeEditor.scrollTop;
-                syntaxOverlay.parentElement.scrollLeft = codeEditor.scrollLeft;
+                syntaxOverlay.scrollTop = codeEditor.scrollTop;
+                syntaxOverlay.scrollLeft = codeEditor.scrollLeft;
             });
 
-            // Smart Indentation and Tab Architecture Engine
+            // --- SMART CARRIAGE TAB & INDENTATION HANDLER ---
             codeEditor.addEventListener('keydown', function(e) {
                 const start = this.selectionStart;
                 const end = this.selectionEnd;
 
-                // Process Tab indentation spaces
                 if (e.key === 'Tab') {
                     e.preventDefault();
                     this.value = this.value.substring(0, start) + "    " + this.value.substring(end);
@@ -480,28 +481,23 @@
                     syncEditorRendering();
                 }
 
-                // Automatic Python Indentation Parsing Framework
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     const lines = this.value.substring(0, start).split('\n');
                     const currentLine = lines[lines.length - 1];
-                    
-                    // Duplicate preceding tab lines
                     let leadingSpaces = currentLine.match(/^ */)[0];
                     
-                    // Shift next line inward 4 spaces if statement code breaks on colons (:)
                     if (currentLine.trim().endsWith(':')) {
                         leadingSpaces += "    ";
                     }
 
-                    const lineBreakInjection = "\n" + leadingSpaces;
-                    this.value = this.value.substring(0, start) + lineBreakInjection + this.value.substring(end);
-                    this.selectionStart = this.selectionEnd = start + lineBreakInjection.length;
+                    const lineBreakWithSpaces = "\n" + leadingSpaces;
+                    this.value = this.value.substring(0, start) + lineBreakWithSpaces + this.value.substring(end);
+                    this.selectionStart = this.selectionEnd = start + lineBreakWithSpaces.length;
                     syncEditorRendering();
                 }
             });
 
-            // Re-render tactical indicator progression dots systematically
             const refreshProgressDotsLayout = () => {
                 dotsContainer.innerHTML = '';
                 for (let idx = 0; idx < 10; idx++) {
@@ -515,7 +511,6 @@
                 }
             };
 
-            // Map and bind metadata properties to viewport content areas
             const loadActiveChallengeState = () => {
                 const challengeItem = advancedCodeQuestions[activeChallengeIdx];
                 titleDisplay.innerHTML = `<span style='color: #00f0ff;'>${challengeItem.pillar}</span> — ${challengeItem.title}`;
@@ -531,7 +526,6 @@
                 codeEditor.value = currentAppState.phase4AdvancedAnswers[activeChallengeIdx] || "";
                 feedbackPanel.style.display = 'none';
 
-                // Automatically highlight text on state transition loads
                 syncEditorRendering();
                 refreshProgressDotsLayout();
             };
@@ -545,14 +539,11 @@
                 }
             };
 
-            // Comprehensive verification engine matching architectural definitions
             document.getElementById('check-code-btn').addEventListener('click', () => {
                 const userSourceScript = codeEditor.value;
                 currentAppState.phase4AdvancedAnswers[activeChallengeIdx] = userSourceScript;
 
                 const targetChallenge = advancedCodeQuestions[activeChallengeIdx];
-
-                // Normalizes validation targets by stripping space markers, comment flags, and quote blocks uniformly
                 const cleanSourceString = userSourceScript.replace(/\s+/g, '').replace(/#.*$/gm, '').replace(/['"]/g, '');
 
                 let matchesAllKeywords = true;
@@ -562,9 +553,10 @@
                         matchesAllKeywords = false;
                     }
                 });
+                
                 feedbackPanel.style.display = 'block';
                 sampleCodeDisplay.textContent = targetChallenge.sample;
-                // Autonomous classification system mapped across standard evaluation metrics
+                
                 if (matchesAllKeywords && cleanSourceString.length > 0) {
                     feedbackPanel.className = "feedback-panel feedback-success";
                     feedbackText.innerHTML = "<i class='fa-solid fa-circle-check' style='color:#39ff14;'></i> <strong>Automated Metric Matcher: Passed Structural Verification!</strong> Code complies with object signature patterns, property validation logic, and inheritance structures.";
@@ -587,13 +579,11 @@
                 saveAggregatedMetricsToGlobalSchema();
             });
 
-            // Binds dropdown option selections to text fields dynamically
             criteriaSelector.addEventListener('change', (e) => {
                 const pickedValue = parseInt(e.target.value) || 0;
                 manualMarkInput.value = pickedValue;
             });
 
-            // Commit metric state changes safely to local state registries
             document.getElementById('save-override-btn').addEventListener('click', () => {
                 let verifiedVal = parseInt(manualMarkInput.value) || 0;
                 if (verifiedVal < 0) verifiedVal = 0;
@@ -608,22 +598,18 @@
                 refreshProgressDotsLayout();
             });
 
-            // Synthesizes current session data back into parent state schemas
             const saveAggregatedMetricsToGlobalSchema = () => {
                 const consolidatedSum = currentAppState.phase4AdvancedScores.reduce((prevVal, currentVal) => prevVal + currentVal, 0);
 
-                // Track advanced coding scores safely inside custom properties
                 if (!currentAppState.scores.advancedCode) {
                     currentAppState.scores.advancedCode = { score: 0, total: 40, status: 'Not Started' };
                 }
 
                 currentAppState.scores.advancedCode.score = consolidatedSum;
                 currentAppState.scores.advancedCode.status = 'Completed';
-
                 localStorage.setItem('oop_exam_state', JSON.stringify(currentAppState));
             };
 
-            // Traversal Adjusters
             document.getElementById('prev-question-btn').addEventListener('click', () => {
                 saveAndNavigateTo(activeChallengeIdx - 1);
             });
@@ -631,7 +617,6 @@
                 saveAndNavigateTo(activeChallengeIdx + 1);
             });
 
-            // Reset engine purging workspace variables smoothly
             document.getElementById('reset-btn').addEventListener('click', () => {
                 if (confirm('Are you entirely certain you want to purge your advanced programming exercises data? This action cannot be undone.')) {
                     currentAppState.phase4AdvancedAnswers = Array(10).fill("");
@@ -646,7 +631,6 @@
                 }
             });
 
-            // Ignition loop execution call
             loadActiveChallengeState();
         });
     </script>
